@@ -1,0 +1,31 @@
+.landing-page {
+    padding: 20px;
+  }
+  
+  .landing-page h1 {
+    font-size: 2.5em;
+    color: #333;
+  }
+  
+  .landing-page p {
+    color: #666;
+  }
+  
+  .landing-page .buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .landing-page img {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  .landing-page h2 {
+    margin-top: 40px;
+    font-size: 1.8em;
+  }

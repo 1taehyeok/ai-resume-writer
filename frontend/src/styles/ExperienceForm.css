@@ -1,0 +1,24 @@
+.experience-form {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  
+  .experience-form select,
+  .experience-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .experience-form textarea {
+    height: 100px;
+  }
+  
+  .form-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }

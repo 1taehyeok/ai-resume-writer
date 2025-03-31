@@ -1,0 +1,19 @@
+.mapping-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+  }
+  
+  .mapping-card img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+  .mapping-card h3 {
+    margin: 10px 0;
+  }

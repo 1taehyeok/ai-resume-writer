@@ -1,0 +1,13 @@
+.preview-letter {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+    white-space: pre-wrap;
+  }
+  
+  .preview-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+  }

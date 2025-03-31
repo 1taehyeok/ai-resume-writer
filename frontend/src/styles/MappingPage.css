@@ -1,0 +1,15 @@
+.mapping-page {
+    padding: 20px;
+  }
+  
+  .mapping-page h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .card-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
