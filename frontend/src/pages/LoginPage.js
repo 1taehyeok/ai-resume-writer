@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
-import { login } from '../services/auth';
+import { login, googleLogin } from '../services/auth';
 import Button from '../components/Button';
 import '../styles/LoginPage.css';
 
@@ -25,9 +26,9 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      const { access_token, user } = await login(email, password);
-      authLogin(access_token, user);
-      navigate(redirectPath); // 원래 경로 또는 기본 경로로 리다이렉트
+      const { access_token, refresh_token, user } = await login(email, password);
+      authLogin(access_token, user, refresh_token);
+      navigate(redirectPath);
     } catch (err) {
       setError(err.message || 'Failed to login');
     } finally {
@@ -35,16 +36,26 @@ function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setError('');
-    setLoading(true);
-    try {
-      window.location.href = 'http://localhost:8000/api/auth/google';
-    } catch (err) {
-      setError(err.message || 'Failed to login with Google');
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      setError('');
+      setLoading(true);
+      try {
+        const { access_token, refresh_token, user } = await googleLogin(codeResponse.code);
+        authLogin(access_token, user, refresh_token);
+        navigate(redirectPath);
+      } catch (err) {
+        setError(err.message || 'Failed to login with Google');
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      setError('Google login failed');
       setLoading(false);
-    }
-  };
+    },
+    flow: 'auth-code',
+  });
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -94,7 +105,7 @@ function LoginPage() {
           <Button
             text="Login with Google"
             variant="secondary"
-            onClick={handleGoogleLogin}
+            onClick={() => handleGoogleLogin()}
             disabled={loading}
           />
         </div>

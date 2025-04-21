@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
-import { register } from '../services/auth';
+import { register, googleLogin } from '../services/auth';
 import Button from '../components/Button';
 import '../styles/SignupPage.css';
 
@@ -21,8 +22,8 @@ function SignupPage() {
     setLoading(true);
 
     try {
-      const { access_token, user } = await register(name, email, password);
-      authLogin(access_token, user);
+      const { access_token, refresh_token, user } = await register(name, email, password);
+      authLogin(access_token, user, refresh_token);
       navigate('/add-experience');
     } catch (err) {
       setError(err.message || 'Failed to sign up');
@@ -31,16 +32,26 @@ function SignupPage() {
     }
   };
 
-  const handleGoogleSignup = async () => {
-    setError('');
-    setLoading(true);
-    try {
-      window.location.href = 'http://localhost:8000/api/auth/google';
-    } catch (err) {
-      setError(err.message || 'Failed to sign up with Google');
+  const handleGoogleSignup = useGoogleLogin({
+    onSuccess: async (codeResponse) => {
+      setError('');
+      setLoading(true);
+      try {
+        const { access_token, refresh_token, user } = await googleLogin(codeResponse.code);
+        authLogin(access_token, user, refresh_token);
+        navigate('/add-experience');
+      } catch (err) {
+        setError(err.message || 'Failed to sign up with Google');
+      } finally {
+        setLoading(false);
+      }
+    },
+    onError: () => {
+      setError('Google signup failed');
       setLoading(false);
-    }
-  };
+    },
+    flow: 'auth-code',
+  });
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -102,7 +113,7 @@ function SignupPage() {
           <Button
             text="Sign Up with Google"
             variant="secondary"
-            onClick={handleGoogleSignup}
+            onClick={() => handleGoogleSignup()}
             disabled={loading}
           />
         </div>

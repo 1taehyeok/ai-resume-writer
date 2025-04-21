@@ -1,19 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { logout } from '../services/auth';
 import Button from '../components/Button';
 import '../styles/Header.css';
 
 function Header() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, login: authLogin } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      const refreshToken = 'fake-refresh-token'; // 실제 구현 시 localStorage에서 가져오기
-      await logout(refreshToken);
-      authLogin(null, null); // AuthContext 초기화
-      navigate('/');
+      await logout();
     } catch (error) {
       console.error('Logout failed:', error);
     }
