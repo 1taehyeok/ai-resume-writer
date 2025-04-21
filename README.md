@@ -53,18 +53,44 @@ ai-resume-writer/
 │           ├── urls.py
 │           └── serializers.py
 │
-├── frontend/                  # React 프로젝트
-│   ├── public/
-│   ├── src/
-│   │   ├── components/        # 공통 컴포넌트
-│   │   ├── pages/             # 페이지 단위 컴포넌트
-│   │   ├── services/          # API 호출 함수들
-│   │   ├── App.js
-│   │   └── index.js
-│   └── package.json
-│
-├── .gitignore
-├── README.md
+frontend/
+├── public/
+│   ├── index.html
+│   └── favicon.ico          # 기본 React favicon (필요 시 추가)
+├── src/
+│   ├── components/
+│   │   ├── Button.js        # 버튼 컴포넌트
+│   │   ├── ExperienceForm.js # 경험 입력 폼
+│   │   ├── Header.js        # 헤더 (로그인/로그아웃, 네비게이션)
+│   │   ├── MappingCard.js   # 매핑 페이지 카드
+│   │   ├── PreviewLetter.js # 미리보기 페이지 레터
+│   │   ├── ReviewCard.js    # 리뷰 카드
+│   │   ├── PrivateRoute.js  # 보호된 경로 컴포넌트
+│   ├── context/
+│   │   ├── AuthContext.js   # 인증 컨텍스트 (Refresh Token 포함)
+│   ├── pages/
+│   │   ├── AddExperiencePage.js # 경험 추가 페이지 (테스트 버튼 추가)
+│   │   ├── LandingPage.js    # 랜딩 페이지
+│   │   ├── LoginPage.js      # 로그인 페이지 (Google OAuth 포함)
+│   │   ├── MappingPage.js    # 매핑 페이지
+│   │   ├── PreviewPage.js    # 미리보기 페이지
+│   │   ├── SignupPage.js     # 회원가입 페이지 (Google OAuth 포함)
+│   ├── services/
+│   │   ├── auth.js          # 인증 API 함수 (login, googleLogin, refreshToken 등)
+│   ├── styles/
+│   │   ├── AddExperiencePage.css
+│   │   ├── App.css
+│   │   ├── Button.css
+│   │   ├── Header.css
+│   │   ├── LoginPage.css
+│   │   ├── SignupPage.css
+│   ├── App.js                # 메인 앱 컴포넌트 (Router, GoogleOAuthProvider)
+│   ├── index.js             # React 앱 진입점
+│   └── index.css            # 글로벌 스타일 (기본 React 제공)
+├── .env                     # 환경 변수 (REACT_APP_GOOGLE_CLIENT_ID)
+├── package.json             # 의존성 (axios, @react-oauth/google 등)
+├── README.md                # 프로젝트 설명 (기본 React 제공)
+└── node_modules/            # 설치된 의존성
 └── docker-compose.yml         # (선택) Docker로 통합 실행
 ```
 
