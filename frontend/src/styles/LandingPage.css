@@ -19,10 +19,20 @@
   }
   
   .landing-page img {
-    width: 100%;
-    max-width: 600px;
+    width: 90%;
+    max-width: 1200px;
+    min-width: 700px;
     height: auto;
     border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .landing-header {
+    margin-bottom: 12px;
+  }
+  .landing-image-section {
+    margin-top: 0;
   }
   
   .landing-page h2 {

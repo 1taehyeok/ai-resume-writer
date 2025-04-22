@@ -23,21 +23,21 @@ function Header() {
           onClick={() => navigate('/')}
           style={{ cursor: 'pointer' }}
         >
-          CoverLetterGenie
+          Ai-Resume-Writer
         </h1>
         <nav className="nav">
           <Button
-            text="Add Experience"
+            text="경헝 생성"
             onClick={() => navigate('/add-experience')}
             variant="secondary"
           />
           <Button
-            text="Mapping"
+            text="경험 매핑"
             onClick={() => navigate('/mapping')}
             variant="secondary"
           />
           <Button
-            text="Preview"
+            text="자소서 생성"
             onClick={() => navigate('/preview')}
             variant="secondary"
           />

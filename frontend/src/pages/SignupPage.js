@@ -12,7 +12,7 @@ function SignupPage() {
   const [name, setName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+
   const navigate = useNavigate();
   const { login: authLogin } = useAuth();
 
@@ -53,10 +53,6 @@ function SignupPage() {
     flow: 'auth-code',
   });
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
     <div className="signup-page">
       <h1>Sign Up for CoverLetterGenie</h1>
@@ -87,25 +83,15 @@ function SignupPage() {
         </div>
         <div className="form-group">
           <label htmlFor="password">Password</label>
-          <div className="password-wrapper">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              required
-              disabled={loading}
-            />
-            <button
-              type="button"
-              className="toggle-password"
-              onClick={toggleShowPassword}
-              disabled={loading}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            required
+            disabled={loading}
+          />
         </div>
         {error && <p className="error-message">{error}</p>}
         <div className="form-buttons">
