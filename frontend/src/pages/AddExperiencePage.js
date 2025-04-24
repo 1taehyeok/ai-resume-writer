@@ -16,10 +16,6 @@ function AddExperiencePage() {
   const [deleteIdx, setDeleteIdx] = useState(null);
   const [editingIdx, setEditingIdx] = useState(null); // 현재 수정 중인 경험 인덱스
 
-  // 경험 리스트 및 상태 변수 (중복 선언 없이 한 번만)
-  // 추가: 임시 경험 목록
-
-
   // 경험 직접 추가 - 제출하기 버튼
   const handleSubmit = (newExperience) => {
     setExperiences([...experiences, newExperience]);
@@ -32,7 +28,6 @@ function AddExperiencePage() {
     setTempExperiences([]);
     setShowAddModal(false);
   };
-
 
   // 경험 리스트 불러오기 (마운트 시)
   useEffect(() => {
@@ -126,9 +121,9 @@ function AddExperiencePage() {
       <Modal open={showAddModal} onClose={() => setShowAddModal(false)}>
         <h2>경험 직접 추가</h2>
         <ExperienceForm 
-  onSubmit={handleSubmit}
-  onCancel={handleCancelAdd}
-/>
+          onSubmit={handleSubmit}
+          onCancel={handleCancelAdd}
+        />
       </Modal>
 
       {/* 자소서에서 경험 추출 모달 */}

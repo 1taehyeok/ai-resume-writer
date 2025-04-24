@@ -1,11 +1,26 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
 import '../styles/Header.css';
 
 function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
+
+  // 경로에 따라 현재 단계를 결정
+  const steps = [
+    { label: '경험 생성', path: '/add-experience' },
+    { label: '자소서 문항 입력', path: '/essay-question-input' },
+    { label: '경험 매핑', path: '/mapping' },
+    { label: '자소서 생성', path: '/preview' },
+  ];
+
+  const getCurrentStep = () => {
+    const idx = steps.findIndex(step => location.pathname.startsWith(step.path));
+    return idx === -1 ? 0 : idx;
+  };
+  const currentStep = getCurrentStep();
 
   const handleLogout = async () => {
     try {
@@ -26,26 +41,19 @@ function Header() {
           Ai-Resume-Writer
         </h1>
         <nav className="nav">
-          <Button
-            text="경헝 생성"
-            onClick={() => navigate('/add-experience')}
-            variant="secondary"
-          />
-          <Button
-            text="자소서 문항 입력"
-            onClick={() => navigate('/essay-question-input')}
-            variant="secondary"
-          />
-          <Button
-            text="경험 매핑"
-            onClick={() => navigate('/mapping')}
-            variant="secondary"
-          />
-          <Button
-            text="자소서 생성"
-            onClick={() => navigate('/preview')}
-            variant="secondary"
-          />
+          <div className="stepper">
+            {steps.map((step, idx) => (
+              <div
+                key={step.label}
+                className={`step${currentStep === idx ? ' active' : ''}${currentStep > idx ? ' completed' : ''}`}
+                onClick={() => navigate(step.path)}
+                style={{ cursor: 'pointer' }}
+              >
+                <span className="step-index">{idx + 1}</span> {step.label}
+                {idx < steps.length - 1 && <span className="arrow">→</span>}
+              </div>
+            ))}
+          </div>
           {isAuthenticated ? (
             <>
               <span className="user-greeting">Hello, {user?.name || 'User'}</span>
