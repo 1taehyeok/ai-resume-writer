@@ -1,0 +1,17 @@
+.alert-modal-content {
+  background: #fff;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  border-radius: 12px;
+  min-width: 320px;
+  max-width: 380px;
+  min-height: 120px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.17);
+  position: relative;
+  text-align: center;
+}
+.alert-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 1.5rem;
+}
