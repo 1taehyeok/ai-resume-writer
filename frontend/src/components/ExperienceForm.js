@@ -2,29 +2,41 @@ import { useState } from 'react';
 import Button from './Button';
 import '../styles/ExperienceForm.css';
 
-function ExperienceForm({ onSubmit }) {
-  const [experience, setExperience] = useState('');
-  const [category, setCategory] = useState('Experience 1');
+function ExperienceForm({ onSubmit, onCancel }) {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ category, experience });
+    if (onSubmit) onSubmit({ title, description });
+    setTitle('');
+    setDescription('');
   };
 
   return (
-    <form className="experience-form" onSubmit={handleSubmit}>
-      <select value={category} onChange={(e) => setCategory(e.target.value)}>
-        <option>Experience 1</option>
-        <option>Experience 2</option>
-      </select>
+    <form className="experience-form">
+      <div>
+        <label>제목</label>
+        <input
+          type="text"
+          className="experience-title-input"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="제목을 입력하세요"
+          required
+        />
+      </div>
       <textarea
-        value={experience}
-        onChange={(e) => setExperience(e.target.value)}
-        placeholder="Describe your experience"
+        value={description}
+        onChange={e => setDescription(e.target.value)}
+        placeholder="내용을 입력하세요"
+        required
+        rows={6}
+        style={{ marginBottom: 8 }}
       />
       <div className="form-buttons">
-        <Button text="Add to drop" variant="secondary" />
-        <Button text="Submit" type="submit" />
+        <Button text="추가하기" type="submit" onClick={handleSubmit} />
+        <Button text="취소" variant="secondary" onClick={onCancel} type="button" />
       </div>
     </form>
   );

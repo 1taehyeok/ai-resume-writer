@@ -32,6 +32,11 @@ function Header() {
             variant="secondary"
           />
           <Button
+            text="자소서 문항 입력"
+            onClick={() => navigate('/essay-question-input')}
+            variant="secondary"
+          />
+          <Button
             text="경험 매핑"
             onClick={() => navigate('/mapping')}
             variant="secondary"

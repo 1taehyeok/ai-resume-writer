@@ -1,8 +1,247 @@
 .add-experience-page {
-    padding: 20px;
+  padding: 32px 0;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.add-experience-page h1 {
+  font-size: 2.3em;
+  margin-bottom: 24px;
+  color: #222;
+  text-align: center;
+}
+
+.add-experience-page section {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  margin: 24px auto;
+  max-width: 600px;
+  padding: 32px 28px 24px 28px;
+}
+
+.add-experience-page h2 {
+  font-size: 1.3em;
+  margin-bottom: 16px;
+  color: #2a2a2a;
+}
+
+.experience-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.experience-item {
+  background: #f1f5f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 18px;
+  padding: 28px 36px 22px 36px;
+  position: relative;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 80vw;
+  max-width: 820px;
+  min-width: 320px;
+}
+
+.experience-item:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.09);
+}
+
+.experience-item strong {
+  font-size: 1.1em;
+  color: #1d3557;
+}
+
+.experience-item button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-right: 6px;
+  margin-top: 6px;
+  transition: opacity 0.2s;
+}
+
+.experience-item .primary {
+  background-color: #6b5b95;
+  color: white;
+}
+
+.experience-item .secondary {
+  background-color: transparent;
+  border: 1px solid #6b5b95;
+  color: #6b5b95;
+}
+
+.button.small {
+  padding: 4px 12px;
+  font-size: 0.92em;
+  border-radius: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
+.experience-item-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.experience-item-row > div:first-child {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+
+.experience-item button:hover {
+  opacity: 0.8;
+}
+
+
+.edit-experience-form input,
+.edit-experience-form textarea {
+  width: 100%;
+  padding: 9px;
+  margin-bottom: 8px;
+  border: 1px solid #bdbdbd;
+  border-radius: 5px;
+  font-size: 1em;
+  background: #fff;
+}
+
+.edit-experience-form {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.extract-form {
+  margin-top: 18px;
+  background: #f7f7fa;
+  border-radius: 12px;
+  padding: 20px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.extract-form label {
+  font-weight: 500;
+  color: #333;
+}
+
+.extract-form input,
+.extract-form textarea {
+  width: 100%;
+  padding: 9px;
+  margin-bottom: 10px;
+  border: 1px solid #bdbdbd;
+  border-radius: 5px;
+  font-size: 1em;
+  background: #fff;
+}
+
+.extract-form button[type="submit"] {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  background-color: #6b5b95;
+  color: white;
+  transition: opacity 0.2s;
+}
+
+.extract-form button[type="submit"]:hover {
+  opacity: 0.8;
+}
+
+
+.add-experience-page button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 10px;
+  transition: opacity 0.2s;
+}
+
+.add-experience-page .primary {
+  background-color: #6b5b95;
+  color: white;
+}
+
+.add-experience-page .secondary {
+  background-color: transparent;
+  border: 1px solid #6b5b95;
+  color: #6b5b95;
+}
+
+.add-experience-page button:hover {
+  opacity: 0.8;
+}
+
+
+@media (max-width: 700px) {
+  .add-experience-page section {
+    max-width: 98vw;
+    padding: 18px 4vw;
   }
-  
-  .add-experience-page h1 {
-    font-size: 2em;
-    margin-bottom: 20px;
+  .experience-list {
+    align-items: stretch;
   }
+  .experience-item {
+    padding: 12px 6px 10px 6px;
+    width: 98vw;
+    min-width: 0;
+    max-width: 100vw;
+  }
+}
+
+.experience-action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.button.button-add {
+  background: #6b5b95;
+  color: #fff;
+  border: none;
+}
+.button.button-add:hover {
+  background: #563d7c;
+}
+
+.button.button-extract {
+  background: #20bfa9;
+  color: #fff;
+  border: none;
+}
+.button.button-extract:hover {
+  background: #179e8d;
+}
+
+.button .icon {
+  margin-right: 7px;
+  font-size: 1.15em;
+  vertical-align: middle;
+}

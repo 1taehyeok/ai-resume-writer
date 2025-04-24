@@ -9,6 +9,7 @@ import MappingPage from './pages/MappingPage';
 import PreviewPage from './pages/PreviewPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import EssayQuestionInputPage from './pages/EssayQuestionInputPage';
 import './styles/App.css';
 
 // 임시 클라이언트 ID (백엔드에서 실제 ID 제공 시 교체)
@@ -25,6 +26,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/add-experience" element={<AddExperiencePage />} />
+                <Route path="/essay-question-input" element={<EssayQuestionInputPage />} />
                 <Route path="/mapping" element={<MappingPage />} />
                 <Route path="/preview" element={<PreviewPage />} />
               </Route>
