@@ -17,6 +17,7 @@ function Header() {
   ];
 
   const getCurrentStep = () => {
+    if (location.pathname === '/') return -1; // LandingPage에서는 active 없음
     const idx = steps.findIndex(step => location.pathname.startsWith(step.path));
     return idx === -1 ? 0 : idx;
   };
@@ -45,7 +46,7 @@ function Header() {
             {steps.map((step, idx) => (
               <div
                 key={step.label}
-                className={`step${currentStep === idx ? ' active' : ''}${currentStep > idx ? ' completed' : ''}`}
+                className={`step${currentStep === idx && currentStep !== -1 ? ' active' : ''}${currentStep > idx ? ' completed' : ''}`}
                 onClick={() => navigate(step.path)}
                 style={{ cursor: 'pointer' }}
               >
