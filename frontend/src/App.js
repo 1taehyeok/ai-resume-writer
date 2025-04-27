@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 import Header from './components/Header';
 import LandingPage from './pages/LandingPage';
+import CompanySelectPage from './pages/CompanySelectPage';
 import AddExperiencePage from './pages/AddExperiencePage';
 import MappingPage from './pages/MappingPage';
 import PreviewPage from './pages/PreviewPage';
@@ -27,6 +28,7 @@ function App() {
   // 단계별 경로 배열
   const steps = [
     '/add-experience',
+    '/company-select',
     '/essay-question-input',
     '/mapping',
     '/preview'
@@ -51,6 +53,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route element={<PrivateRoute />}>
                 <Route path="/add-experience" element={<AddExperiencePage />} />
+                <Route path="/company-select" element={<CompanySelectPage />} />
                 <Route path="/essay-question-input" element={<EssayQuestionInputPage />} />
                 <Route path="/mapping" element={<MappingPage />} />
                 <Route path="/preview" element={<PreviewPage />} />

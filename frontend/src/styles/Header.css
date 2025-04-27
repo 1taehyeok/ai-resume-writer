@@ -28,21 +28,22 @@
 .stepper {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-right: 2rem;
+  gap: 10px;
+  margin-right: 1.2rem;
 }
 
 .step {
   display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  background: #e9ecef;
-  color: #495057;
+  font-size: 0.97rem;
   font-weight: 500;
-  font-size: 1rem;
+  color: #1976d2;
+  background: #e3f0ff;
+  border-radius: 18px;
+  padding: 0.18rem 0.7rem 0.18rem 0.5rem;
   transition: background 0.2s, color 0.2s;
   position: relative;
+  min-width: 0;
 }
 
 .step:not(:last-child) {
@@ -50,27 +51,20 @@
 }
 
 .step.active {
-  background: #007bff;
+  background: #1976d2;
   color: #fff;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0,123,255,0.10);
 }
 
 .step.completed {
   background: #b3e5fc;
-  color: #007bff;
-}
-
-.arrow {
-  margin: 0 0.25rem;
-  color: #adb5bd;
-  font-size: 1.2rem;
+  color: #1976d2;
 }
 
 .step-index {
   display: inline-block;
-  background: #fff;
-  color: #007bff;
+  width: 1.25em;
+  height: 1.25em;
+  line-height: 1.25em;
   border-radius: 50%;
   width: 1.5em;
   height: 1.5em;

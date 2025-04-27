@@ -10,10 +10,11 @@ function Header() {
 
   // 경로에 따라 현재 단계를 결정
   const steps = [
-    { label: '경험 생성', path: '/add-experience' },
-    { label: '자소서 문항 입력', path: '/essay-question-input' },
-    { label: '경험 매핑', path: '/mapping' },
-    { label: '자소서 생성', path: '/preview' },
+    { label: '경험<br />생성', path: '/add-experience' },
+    { label: '기업<br />선택', path: '/company-select' },
+    { label: '자소서<br />문항입력', path: '/essay-question-input' },
+    { label: '경험<br />매핑', path: '/mapping' },
+    { label: '자소서<br />생성', path: '/preview' },
   ];
 
   const getCurrentStep = () => {
@@ -50,7 +51,7 @@ function Header() {
                 onClick={() => navigate(step.path)}
                 style={{ cursor: 'pointer' }}
               >
-                <span className="step-index">{idx + 1}</span> {step.label}
+                <span className="step-index">{idx + 1}</span> <span dangerouslySetInnerHTML={{ __html: step.label }} />
                 {idx < steps.length - 1 && <span className="arrow">→</span>}
               </div>
             ))}

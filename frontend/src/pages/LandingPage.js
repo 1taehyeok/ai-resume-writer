@@ -15,6 +15,7 @@ function LandingPage() {
         <p>AI로 쉽고 빠르게 나만의 커버레터를 완성하세요!</p>
         <div className="buttons">
           <Button text="Get Started" onClick={() => window.location.href = '/add-experience'} />
+          <Button text="기업 선택하기" variant="secondary" onClick={() => window.location.href = '/company-select'} />
           <Button text="Learn More" variant="secondary" onClick={scrollToHowItWorks} />
         </div>
       </header>
