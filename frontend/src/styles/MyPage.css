@@ -1,0 +1,144 @@
+/* MyPage 기본 스타일 */
+
+.mypage-tabs.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 140px;
+  border-right: 1.5px solid #e0e0e0;
+  padding-right: 16px;
+  padding-top: 12px;
+}
+.mypage-content {
+  flex: 1;
+  padding-left: 8px;
+}
+
+.mypage-tab {
+  white-space: nowrap;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 14px 24px 14px 18px;
+    font-size: 1.08em;
+    color: #888;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.18s, color 0.18s;
+    font-weight: 500;
+    text-align: right;
+    width: 100%;
+  }
+
+.mypage-tab:hover {
+  color: #1976d2;
+  background: #f0f7ff;
+}
+
+
+.mypage-tab.active {
+  color: #1976d2;
+  background: #f7faff;
+  border-bottom: 2.5px solid #1976d2;
+  font-weight: 700;
+}
+
+.my-page.side-layout {
+  display: flex;
+  flex-direction: row;
+  min-height: 80vh;
+  background: none;
+  box-shadow: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.mypage-sidebar {
+  position: fixed;
+  top: 100px;
+  left: 0;
+  width: 180px;
+  height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: #fff;
+  border-radius: 0 18px 18px 0;
+  box-shadow: 2px 0 12px rgba(80,80,150,0.08);
+  padding: 32px 0 32px 0;
+  z-index: 10;
+}
+.mypage-tabs.vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 140px;
+  align-items: flex-end;
+}
+
+
+.mypage-main-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mypage-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 36px 44px;
+  min-width: 400px;
+  min-height: 300px;
+}
+
+.my-page h1 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 36px;
+  text-align: center;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+  section {
+    margin-bottom: 36px;
+  }
+  .subscribe-btn, .unsubscribe-btn, .withdraw-btn {
+    margin-right: 12px;
+    margin-top: 8px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .subscribe-btn { background: #1976d2; color: #fff; }
+  .unsubscribe-btn { background: #e53935; color: #fff; }
+  .withdraw-btn { background: #757575; color: #fff; }
+  .change-password-form input {
+    display: block;
+    margin: 8px 0;
+    padding: 8px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  .change-password-form button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  .change-password-form button:hover {
+    background: #1565c0;
+  }
+  

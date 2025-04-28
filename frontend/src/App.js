@@ -11,9 +11,11 @@ import PreviewPage from './pages/PreviewPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import EssayQuestionInputPage from './pages/EssayQuestionInputPage';
+import SubscriptionPage from './pages/SubscriptionPage';
+import MyPage from './pages/MyPage';
 import './styles/App.css';
 import FixedStepNav from './components/FixedStepNav';
-import './components/FixedStepNav.css';
+
 
 // 임시 클라이언트 ID (백엔드에서 실제 ID 제공 시 교체)
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || 'DUMMY_CLIENT_ID';
@@ -60,6 +62,10 @@ function App() {
               </Route>
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
+              <Route path="/subscription" element={<SubscriptionPage />} />
+              <Route element={<PrivateRoute />}>
+  <Route path="/mypage" element={<MyPage />} />
+</Route>
             </Routes>
             {/* 로그인/회원가입이 아닐 때만 고정 네비게이션 버튼 보이기 */}
             {!hideNav && (

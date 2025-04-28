@@ -1,9 +1,13 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Button from '../components/Button';
+import ProfileDropdown from './ProfileDropdown';
 import '../styles/Header.css';
 
+import React, { useState } from 'react';
+
 function Header() {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user, logout } = useAuth();
@@ -17,11 +21,19 @@ function Header() {
     { label: '자소서<br />생성', path: '/preview' },
   ];
 
+  const stepPages = [
+    '/add-experience',
+    '/company-select',
+    '/essay-question-input',
+    '/mapping',
+    '/preview'
+  ];
   const getCurrentStep = () => {
-    if (location.pathname === '/') return -1; // LandingPage에서는 active 없음
+    if (!stepPages.some(path => location.pathname.startsWith(path))) return -1;
     const idx = steps.findIndex(step => location.pathname.startsWith(step.path));
-    return idx === -1 ? 0 : idx;
+    return idx;
   };
+
   const currentStep = getCurrentStep();
 
   const handleLogout = async () => {
@@ -59,7 +71,36 @@ function Header() {
           {isAuthenticated ? (
             <>
               <span className="user-greeting">Hello, {user?.name || 'User'}</span>
-              <Button text="Logout" onClick={handleLogout} variant="primary" />
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <img
+                  src={user?.profileImage || 'https://www.gravatar.com/avatar/?d=mp&s=40'}
+                  alt="마이페이지"
+                  className="mypage-avatar"
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    marginLeft: 12,
+                    cursor: 'pointer',
+                    border: '2px solid #1976d2',
+                    objectFit: 'cover',
+                  }}
+                  onClick={() => setDropdownOpen((open) => !open)}
+                />
+                {dropdownOpen && (
+                  <ProfileDropdown
+                    onClose={() => setDropdownOpen(false)}
+                    onNavigate={(path) => {
+                      setDropdownOpen(false);
+                      navigate(path);
+                    }}
+                    onLogout={async () => {
+                      setDropdownOpen(false);
+                      await handleLogout();
+                    }}
+                  />
+                )}
+              </div>
             </>
           ) : (
             <Button

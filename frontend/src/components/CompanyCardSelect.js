@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import './CompanyCardSelect.css';
+import AlertModal from './AlertModal';
+import useAlertModal from './CompanyCardSelect.AlertModalState';
+import '../styles/CompanyCardSelect.css';
 
 const initialCompanies = [
   { id: 1, name: '삼성전자' },
@@ -8,6 +10,12 @@ const initialCompanies = [
 ];
 
 function CompanyCardSelect() {
+  const {
+    modal,
+    showModal,
+    closeModal,
+    confirmModal,
+  } = useAlertModal();
   const [companies, setCompanies] = useState(initialCompanies);
   const [selectedId, setSelectedId] = useState(null);
   const [newCompany, setNewCompany] = useState('');
@@ -54,14 +62,15 @@ function CompanyCardSelect() {
 
   const handleDelete = (id) => {
     const company = companies.find(c => c.id === id);
-    if (window.confirm(`'${company.name}' 기업을 삭제할까요?`)) {
-      setCompanies(companies.filter(c => c.id !== id));
+    showModal(company, () => {
+      setCompanies(prev => prev.filter(c => c.id !== id));
       if (selectedId === id) setSelectedId(null);
       if (editId === id) setEditId(null);
-    }
+    });
   };
 
   return (
+    <>
     <div className="company-card-select-container">
       <h3>기업을 선택하세요</h3>
       <div className="company-input-area">
@@ -127,6 +136,16 @@ function CompanyCardSelect() {
         </div>
       )}
     </div>
+    <AlertModal
+      open={modal.open}
+      title="기업 삭제"
+      message={modal.company ? `'${modal.company.name}' 기업을 삭제하시겠습니까?` : ''}
+      onConfirm={confirmModal}
+      onCancel={closeModal}
+      confirmText="삭제"
+      cancelText="취소"
+    />
+    </>
   );
 }
 

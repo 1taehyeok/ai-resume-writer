@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
+import AlertModal from '../components/AlertModal';
+import useAlertModal from './EssayQuestionInputPage.AlertModalState';
 import EssayQuestionForm from '../components/EssayQuestionForm';
 import Modal from '../components/Modal';
 import '../styles/EssayQuestionInputPage.css';
 
 function EssayQuestionInputPage() {
+  const {
+    modal,
+    showModal,
+    closeModal,
+    confirmModal,
+  } = useAlertModal();
   const [questions, setQuestions] = useState([
     // 예시 mock 데이터
     // { question: '지원 동기를 작성하세요.', description: '회사에 지원한 이유를 구체적으로...' }
@@ -21,9 +29,13 @@ function EssayQuestionInputPage() {
     setQuestions(questions.map((q, i) => (i === idx ? { question: updated.question } : q)));
     setEditingIdx(null);
   };
-  const handleDelete = (idx) => setQuestions(questions.filter((_, i) => i !== idx));
+  const handleDelete = (idx) => {
+    const q = questions[idx];
+    showModal(idx, q.question, () => setQuestions(questions.filter((_, i) => i !== idx)));
+  };
 
   return (
+    <>
     <div className="essay-question-input-page">
 
       {showAdd && (
@@ -72,6 +84,16 @@ function EssayQuestionInputPage() {
         )}
       </section>
     </div>
+    <AlertModal
+      open={modal.open}
+      title="문항 삭제"
+      message={modal.question ? `해당 문항을 삭제하시겠습니까?\n\n${modal.question}` : ''}
+      onConfirm={confirmModal}
+      onCancel={closeModal}
+      confirmText="삭제"
+      cancelText="취소"
+    />
+    </>
   );
 }
 

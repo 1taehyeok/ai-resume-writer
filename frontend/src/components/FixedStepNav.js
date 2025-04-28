@@ -1,5 +1,5 @@
 import React from "react";
-import "./FixedStepNav.css";
+import '../styles/FixedStepNav.css';
 
 export default function FixedStepNav({ onPrev, onNext, showPrev = true, showNext = true }) {
   return (
