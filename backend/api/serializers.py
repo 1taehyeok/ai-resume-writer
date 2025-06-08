@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Experience
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,3 +39,16 @@ class RegisterSerializer(serializers.ModelSerializer):
                 }
             }
         }
+
+class ExperienceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Experience
+        fields = ('id', 'title', 'description', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at')
+
+class UserSerializer(serializers.ModelSerializer):
+    experiences = ExperienceSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'name', 'email', 'experiences')
