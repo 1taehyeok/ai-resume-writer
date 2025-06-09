@@ -87,6 +87,108 @@ def login(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 @api_view(['POST'])
+@permission_classes([AllowAny])
+def google_login(request):
+    try:
+        # 1. Google OAuth2 코드 검증
+        code = request.data.get('code')
+        if not code:
+            return Response({
+                'success': False,
+                'message': '인증 코드가 필요합니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 2. Google API로 토큰 교환
+        token_response = requests.post(
+            'https://oauth2.googleapis.com/token',
+            data={
+                'code': code,
+                'client_id': settings.GOOGLE_CLIENT_ID,
+                'client_secret': settings.GOOGLE_CLIENT_SECRET,
+                'redirect_uri': settings.GOOGLE_REDIRECT_URI,
+                'grant_type': 'authorization_code'
+            }
+        )
+        
+        if token_response.status_code != 200:
+            return Response({
+                'success': False,
+                'message': 'Google 인증 실패'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        # 3. Google 사용자 정보 가져오기
+        user_info_response = requests.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            headers={
+                'Authorization': f'Bearer {token_response.json()["access_token"]}'
+            }
+        )
+        
+        if user_info_response.status_code != 200:
+            return Response({
+                'success': False,
+                'message': 'Google 사용자 정보 가져오기 실패'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+        
+        user_info = user_info_response.json()
+        
+        # 4. 사용자 검증 및 생성
+        try:
+            user = User.objects.get(email=user_info['email'])
+        except User.DoesNotExist:
+            # 새로운 사용자 생성
+            user = User.objects.create_user(
+                email=user_info['email'],
+                name=user_info.get('name', ''),
+                password=None  # 구글 로그인은 비밀번호 필요 없음
+            )
+        
+        # 5. JWT 토큰 생성
+        refresh = RefreshToken.for_user(user)
+        user_data = UserSerializer(user).data
+        
+        return Response({
+            'success': True,
+            'data': {
+                'access_token': str(refresh.access_token),
+                'refresh_token': str(refresh),
+                'user': user_data
+            }
+        }, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        print("Google login error:", str(e))
+        return Response({
+            'success': False,
+            'message': '서버 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def logout(request):
+    try:
+        # 1. Refresh Token 검증
+        refresh_token = request.data.get('refresh_token')
+        
+        # 2. 쿠키 삭제
+        response = Response({
+            'success': True,
+            'message': '로그아웃되었습니다.'
+        })
+        
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        
+        return response
+        
+    except Exception as e:
+        print("Logout error:", str(e))
+        return Response({
+            'success': False,
+            'message': '서버 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def save_experiences(request):
