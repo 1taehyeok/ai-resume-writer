@@ -149,7 +149,7 @@ paths:
                   message:
                     type: string
                     example: "계정이 비활성화되어 있습니다."
-                    
+
   /google-login:
     post:
       summary: Google 로그인/회원가입
@@ -223,7 +223,7 @@ paths:
                     type: string
                     example: "Google 인증 실패"
 
-  /logout:
+  /logout/:
     post:
       summary: 로그아웃
       requestBody:
@@ -235,6 +235,8 @@ paths:
               properties:
                 refresh_token:
                   type: string
+                  description: Refresh Token (선택적)
+                  example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
       responses:
         '200':
           description: 성공
@@ -245,10 +247,27 @@ paths:
                 properties:
                   success:
                     type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "로그아웃되었습니다."
+        '500':
+          description: 실패(서버 오류)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "서버 오류가 발생했습니다."
 
-  /refresh:
+  /token/refresh/:
     post:
-      summary: 토큰 갱신
+      summary: Access Token 재발급
       requestBody:
         required: true
         content:
@@ -256,8 +275,10 @@ paths:
             schema:
               type: object
               properties:
-                refresh_token:
+                refresh:
                   type: string
+                  description: Refresh Token
+                  example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
       responses:
         '200':
           description: 성공
@@ -266,5 +287,38 @@ paths:
               schema:
                 type: object
                 properties:
-                  access_token:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+        '401':
+          description: 실패(유효하지 않은 Refresh Token)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
                     type: string
+                    example: "유효하지 않은 Refresh Token입니다."
+        '400':
+          description: 실패(필수 필드 누락)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Refresh Token이 필요합니다."
