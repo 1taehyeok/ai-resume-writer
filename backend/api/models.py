@@ -44,6 +44,19 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+    @property
+    def token(self):
+        return self._generate_jwt_token()
+
+    def _generate_jwt_token(self):
+        refresh = RefreshToken.for_user(self)
+        refresh['user_id'] = self.id
+        refresh['email'] = self.email
+        return {
+            'access_token': str(refresh.access_token),
+            'refresh_token': str(refresh)
+        }
+
 class Experience(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)

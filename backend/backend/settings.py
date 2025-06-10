@@ -16,6 +16,10 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# settings.py
+AUTH_USER_MODEL = 'api.User'  # 이 설정이 있어야 합니다
+
+# 이 설정이 없거나 'auth.User'로 되어 있다면 수정이 필요합니다
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -45,9 +49,9 @@ REST_FRAMEWORK = {
     ],
 }
 
+# settings.py
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
-    # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -63,15 +67,20 @@ SIMPLE_JWT = {
 
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
-
+    'USER_ID_FIELD': 'id',  # User 모델의 id 필드를 사용
+    'USER_ID_CLAIM': 'user_id',  # 토큰에서 사용자 식별자로 사용
+    'USER_AUTHENTICATION_RULE': 'api.authentication.custom_user_authentication_rule',
+    
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
-    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
-
+    'TOKEN_USER_CLASS': 'api.models.User',
+    
     'JTI_CLAIM': 'jti',
+    
+    # 토큰 검증 시 사용자 정보 검색을 위한 쿼리셋 설정
+    'USER_QUERYSET': 'api.models.User.objects.all',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
 }
 
 # Application definition

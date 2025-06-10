@@ -322,3 +322,149 @@ paths:
                   message:
                     type: string
                     example: "Refresh Token이 필요합니다."
+
+  /update-profile/:
+    put:
+      summary: 프로필 수정
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  nullable: true
+                  description: 변경할 사용자 이름 (변경하지 않을 경우 생략 가능)
+                  example: 홍길동
+                current_password:
+                  type: string
+                  description: 현재 비밀번호 (필수)
+                  example: current_password123
+                password:
+                  type: string
+                  nullable: true
+                  description: 변경할 새 비밀번호 (변경하지 않을 경우 생략 가능)
+                  example: new_password456
+              required:
+                - current_password
+      responses:
+        '200':
+          description: 성공
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "프로필이 성공적으로 업데이트되었습니다."
+                      data:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          email:
+                            type: string
+                            format: email
+                            example: user@example.com
+                          name:
+                            type: string
+                            example: 홍길동
+                  - type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "비밀번호가 성공적으로 변경되었습니다."
+                      data:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          email:
+                            type: string
+                            format: email
+                            example: user@example.com
+                          name:
+                            type: string
+                            example: 홍길동
+                  - type: object
+                    properties:
+                      success:
+                        type: boolean
+                        example: true
+                      message:
+                        type: string
+                        example: "비밀번호와 프로필이 성공적으로 업데이트되었습니다."
+                      data:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          email:
+                            type: string
+                            format: email
+                            example: user@example.com
+                          name:
+                            type: string
+                            example: 홍길동
+        '400':
+          description: |
+            실패
+            - 현재 비밀번호를 입력해주세요.
+            - 유효하지 않은 데이터
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "현재 비밀번호를 입력해주세요."
+                  errors:
+                    type: object
+                    nullable: true
+                    example:
+                      name: ["이 필드는 blank일 수 없습니다."]
+        '401':
+          description: 실패(인증 실패)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "현재 비밀번호가 일치하지 않습니다."
+        '500':
+          description: 서버 오류
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "프로필 업데이트 중 오류가 발생했습니다."

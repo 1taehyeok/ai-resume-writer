@@ -9,13 +9,58 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+import logging
+from rest_framework_simplejwt.tokens import AccessToken
 
-@api_view(['GET'])
+logger = logging.getLogger(__name__)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def test_api(request):
-    return Response({
-        'message': 'Hello from Django Backend!',
-        'status': 'success'
-    })
+    try:
+        # 요청 바디에서 토큰 추출
+        token = request.data.get('token')
+        if not token:
+            return Response({
+                'message': 'No token provided',
+                'status': 'error'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 토큰 디코딩
+        try:
+            decoded_token = AccessToken(token)
+            token_info = {
+                'user_id': decoded_token.get('user_id'),
+                'email': decoded_token.get('email'),
+                'name': decoded_token.get('name'),
+                'exp': decoded_token.get('exp'),
+                'iat': decoded_token.get('iat'),
+                'token_type': decoded_token.get('token_type'),
+                'jti': decoded_token.get('jti')
+            }
+            return Response({
+                'message': 'Token Decoded for Test',
+                'status': 'success',
+                'token_info': token_info
+            })
+        except Exception as e:
+            return Response({
+                'message': 'Token decoding error',
+                'error': str(e),
+                'status': 'error'
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    except Exception as e:
+        return Response({
+            'message': 'Internal server error',
+            'error': str(e),
+            'status': 'error'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -34,6 +79,14 @@ def register(request):
         'message': error_messages[0] if error_messages else 'Invalid input'
     }, status=status.HTTP_400_BAD_REQUEST)
 
+# api/views.py
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+from django.contrib.auth import get_user_model
+import logging
+
+logger = logging.getLogger(__name__)
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
@@ -41,46 +94,80 @@ def login(request):
         email = request.data.get('email')
         password = request.data.get('password')
         
+        print(f"\n=== 로그인 시도 ===")
+        print(f"요청된 이메일: {email}")
+        print(f"요청 데이터: {request.data}")
+        
         if not email or not password:
+            print("에러: 이메일 또는 비밀번호 누락")
             return Response({
                 'success': False,
                 'message': '이메일과 비밀번호가 필요합니다.'
             }, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            user = User.objects.get(email=email)
+            User = get_user_model()
+            print(f"사용자 모델: {User}")
+            
+            try:
+                user = User.objects.get(email=email)
+                print(f"사용자 찾음 - ID: {user.id}, Email: {user.email}, Active: {user.is_active}")
+            except User.DoesNotExist:
+                print(f"에러: {email}에 해당하는 사용자를 찾을 수 없음")
+                return Response({
+                    'success': False,
+                    'message': '잘못된 이메일 또는 비밀번호입니다.'
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
             if not user.check_password(password):
+                print("에러: 비밀번호 불일치")
                 return Response({
                     'success': False,
                     'message': '잘못된 이메일 또는 비밀번호입니다.'
                 }, status=status.HTTP_401_UNAUTHORIZED)
             
             if not user.is_active:
+                print("에러: 비활성화된 계정")
                 return Response({
                     'success': False,
                     'message': '계정이 비활성화되어 있습니다.'
                 }, status=status.HTTP_403_FORBIDDEN)
             
-            refresh = RefreshToken.for_user(user)
-            user_data = UserSerializer(user).data
+            print("사용자 인증 성공, 토큰 생성 시도...")
             
-            return Response({
-                'success': True,
-                'data': {
-                    'access_token': str(refresh.access_token),
-                    'refresh_token': str(refresh),
-                    'user': user_data
-                }
-            }, status=status.HTTP_200_OK)
+            try:
+                refresh = RefreshToken.for_user(user)
+                print("토큰 생성 성공")
+                
+                return Response({
+                    'success': True,
+                    'data': {
+                        'access_token': str(refresh.access_token),
+                        'refresh_token': str(refresh),
+                        'user': {
+                            'id': user.id,
+                            'email': user.email,
+                            'name': user.name
+                        }
+                    }
+                }, status=status.HTTP_200_OK)
+                
+            except Exception as e:
+                print(f"토큰 생성 오류: {str(e)}")
+                return Response({
+                    'success': False,
+                    'message': '토큰 생성 중 오류가 발생했습니다.'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        except User.DoesNotExist:
+        except Exception as e:
+            print(f"로그인 처리 중 오류: {str(e)}")
             return Response({
                 'success': False,
-                'message': '잘못된 이메일 또는 비밀번호입니다.'
-            }, status=status.HTTP_401_UNAUTHORIZED)
-
+                'message': '로그인 처리 중 오류가 발생했습니다.'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     except Exception as e:
-        print("Login error:", str(e))
+        print(f"예상치 못한 오류: {str(e)}")
         return Response({
             'success': False,
             'message': '서버 오류가 발생했습니다.'
@@ -188,6 +275,74 @@ def logout(request):
             'message': '서버 오류가 발생했습니다.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(['PUT'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def update_profile(request):
+    try:
+        # 현재 사용자 가져오기
+        user = request.user
+        
+        # 현재 비밀번호 검증 (모든 수정 시 필수)
+        current_password = request.data.get('current_password')
+        if not current_password:
+            return Response({
+                'success': False,
+                'message': '현재 비밀번호를 입력해주세요.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        if not user.check_password(current_password):
+            return Response({
+                'success': False,
+                'message': '현재 비밀번호가 일치하지 않습니다.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 비밀번호 변경 요청이 있는 경우
+        new_password = request.data.get('password')
+        if new_password:
+            user.set_password(new_password)
+        
+        # 기타 정보 수정
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            # 비밀번호와 기타 정보를 함께 저장
+            user = serializer.save()
+            
+            # 비밀번호를 변경한 경우 user 객체를 다시 저장
+            if new_password:
+                user.save()
+            
+            # 응답 데이터 생성
+            response_data = {
+                'success': True,
+                'message': '프로필이 성공적으로 업데이트되었습니다.',
+                'data': {
+                    'id': user.id,
+                    'email': user.email,
+                    'name': user.name
+                }
+            }
+            
+            # 비밀번호를 변경한 경우 메시지 추가
+            if new_password:
+                response_data['message'] = '비밀번호와 프로필이 성공적으로 업데이트되었습니다.'
+                
+            return Response(response_data)
+            
+        return Response({
+            'success': False,
+            'message': '유효하지 않은 데이터입니다.',
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+            
+    except Exception as e:
+        print(f"프로필 업데이트 오류: {str(e)}")
+        return Response({
+            'success': False,
+            'message': '프로필 업데이트 중 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])

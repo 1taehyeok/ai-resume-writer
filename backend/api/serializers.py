@@ -5,9 +5,20 @@ from .models import Experience
 
 
 class UserSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = User
-        fields = ('id', 'name', 'email')
+        fields = ('id', 'email', 'name')
+        read_only_fields = ('id', 'email')  # PK와 이메일은 읽기 전용
+        extra_kwargs = {
+            'name': {'required': False},
+            'password': {'required': False}
+        }
+    def update(self, instance, validated_data):
+        # 비밀번호 변경 시
+        if 'password' in validated_data:
+            instance.set_password(validated_data.pop('password'))
+        return super().update(instance, validated_data)
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -46,9 +57,3 @@ class ExperienceSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'description', 'created_at', 'updated_at')
         read_only_fields = ('id', 'created_at', 'updated_at')
 
-class UserSerializer(serializers.ModelSerializer):
-    experiences = ExperienceSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = User
-        fields = ('id', 'name', 'email', 'experiences')
