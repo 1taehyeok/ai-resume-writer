@@ -18,7 +18,21 @@ function ProfileDropdown({ onClose, onNavigate, onLogout = () => {} }) {
     <div className="profile-dropdown" ref={dropdownRef}>
       <button onClick={() => onNavigate('/mypage')} className="profile-dropdown-item">마이페이지</button>
       <button onClick={() => onNavigate('/subscription')} className="profile-dropdown-item">구독하기</button>
-      <button onClick={onLogout} className="profile-dropdown-item danger">로그아웃</button>
+      
+      <button
+        onClick={async () => {
+          try {
+            await onLogout();
+            onClose();
+          } catch (error) {
+            console.error('Logout failed:', error.message);
+            alert(error.message); // 실패 메시지
+          }
+        }}
+        className="profile-dropdown-item danger"
+      >
+        로그아웃
+      </button>
     </div>
   );
 }

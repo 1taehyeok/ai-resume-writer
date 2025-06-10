@@ -26,8 +26,9 @@ function LoginPage() {
     setLoading(true);
 
     try {
-      const { access_token, refresh_token, user } = await login(email, password);
-      authLogin(access_token, user, refresh_token);
+      const data = await login(email, password);
+      console.log('Login data:', data); // 디버깅: 로그인 데이터 확인
+      authLogin(data); // 객체로 전달
       navigate(redirectPath);
     } catch (err) {
       setError(err.message || 'Failed to login');
@@ -41,8 +42,9 @@ function LoginPage() {
       setError('');
       setLoading(true);
       try {
-        const { access_token, refresh_token, user } = await googleLogin(codeResponse.code);
-        authLogin(access_token, user, refresh_token);
+        const data = await googleLogin(codeResponse.code);
+        console.log('Google login data:', data); // 디버깅: 구글 로그인 데이터 확인
+        authLogin(data); // 객체로 전달
         navigate(redirectPath);
       } catch (err) {
         setError(err.message || 'Failed to login with Google');

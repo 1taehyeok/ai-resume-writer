@@ -36,11 +36,14 @@ function Header() {
 
   const currentStep = getCurrentStep();
 
+  // Header.js
   const handleLogout = async () => {
     try {
       await logout();
+      setDropdownOpen(false);
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('Logout failed:', error.message);
+      alert(error.message); // 실패 메시지
     }
   };
 

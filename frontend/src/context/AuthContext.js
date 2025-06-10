@@ -19,11 +19,28 @@ export function AuthProvider({ children }) {
     const storedUser = localStorage.getItem('user');
     const storedRefreshToken = localStorage.getItem('refresh_token');
 
-    if (token && storedUser) {
+    // storedUser가 유효한 JSON인지 확인
+    let parsedUser = null;
+    if (storedUser) {
+      try {
+        parsedUser = JSON.parse(storedUser);
+      } catch (error) {
+        console.error('Invalid user data in localStorage:', error);
+        // 잘못된 데이터가 있으면 localStorage에서 user 제거
+        localStorage.removeItem('user');
+      }
+    }
+
+    if (token && parsedUser) {
       setAccessToken(token);
-      setUser(JSON.parse(storedUser));
+      setUser(parsedUser);
       setRefreshTokenValue(storedRefreshToken);
       setIsAuthenticated(true);
+    } else {
+      // 유효하지 않은 데이터가 있으면 localStorage 초기화
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('refresh_token');
     }
     setLoading(false);
   }, []);
@@ -59,21 +76,21 @@ export function AuthProvider({ children }) {
     return () => axios.interceptors.response.eject(interceptor);
   }, [refreshTokenValue]);
 
-  const login = useCallback((token, user, refreshToken) => {
-    setAccessToken(token);
+  const login = useCallback((data) => {
+    const { access_token, refresh_token, user } = data;
+    setAccessToken(access_token);
     setUser(user);
-    setRefreshTokenValue(refreshToken);
+    setRefreshTokenValue(refresh_token);
     setIsAuthenticated(true);
-    localStorage.setItem('access_token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('refresh_token', refreshToken);
+    localStorage.setItem('access_token', access_token);
+    localStorage.setItem('user', JSON.stringify(user)); // JSON.stringify로 안전하게 저장
+    localStorage.setItem('refresh_token', refresh_token);
   }, []);
 
+  // AuthContext.js
   const handleLogout = useCallback(async () => {
     try {
-      if (refreshTokenValue) {
-        await logout(refreshTokenValue);
-      }
+      await logout(refreshTokenValue); // refreshTokenValue가 없어도 호출 가능
       setAccessToken(null);
       setUser(null);
       setRefreshTokenValue(null);
@@ -83,7 +100,8 @@ export function AuthProvider({ children }) {
       localStorage.removeItem('refresh_token');
       navigate('/login');
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('Logout failed:', error.message);
+      // 사용자에게 에러 메시지 표시 (예: alert 또는 UI 컴포넌트)
     }
   }, [navigate, refreshTokenValue]);
 

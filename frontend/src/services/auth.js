@@ -9,9 +9,11 @@ const api = axios.create({
 // 요청 인터셉터: 모든 요청에 토큰 추가
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    if (!config.url.endsWith('/logout/')) {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },
@@ -21,11 +23,11 @@ api.interceptors.request.use(
 // 회원가입
 export async function register(name, email, password) {
   try {
-    return {
-      access_token: 'fake-token',
-      refresh_token: 'fake-refresh-token',
-      user: { id: Date.now(), name, email },
-    };
+    const response = await api.post('/register/', { name, email, password });
+    if (response.data.success) {
+      return response.data.data; // { access_token, refresh_token, user }
+    }
+    throw new Error(response.data.message || 'Registration failed');
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Network error');
   }
@@ -34,11 +36,12 @@ export async function register(name, email, password) {
 // 일반 로그인
 export async function login(email, password) {
   try {
-    return {
-      access_token: 'fake-token',
-      refresh_token: 'fake-refresh-token',
-      user: { id: 1, name: 'Test User', email },
-    };
+    const response = await api.post('/token/', { email, password });
+    if (response.data.success) {
+      console.log('Login response:', response.data); // 응답 확인
+      return response.data.data; // { access_token, refresh_token, user }
+    }
+    throw new Error(response.data.message || 'Login failed');
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Network error');
   }
@@ -47,15 +50,11 @@ export async function login(email, password) {
 // Google 로그인/회원가입
 export async function googleLogin(code) {
   try {
-    return {
-      access_token: 'fake-google-token',
-      refresh_token: 'fake-google-refresh-token',
-      user: {
-        id: Date.now(),
-        name: 'Google User',
-        email: 'googleuser@example.com',
-      },
-    };
+    const response = await api.post('/google-login/', { code });
+    if (response.data.success) {
+      return response.data.data; // { access_token, refresh_token, user }
+    }
+    throw new Error(response.data.message || 'Google login failed');
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Google login failed');
   }
@@ -64,33 +63,24 @@ export async function googleLogin(code) {
 // 로그아웃
 export async function logout(refreshToken) {
   try {
-    // 백엔드 API 미구현: 더미 응답
-    return true;
-    // 실제 API 호출 (준비 시 활성화)
-    /*
-    const response = await api.post('/logout', { refresh_token: refreshToken });
-    return response.data.success;
-    */
+    const response = await api.post('/logout/', { refresh_token: refreshToken });
+    if (response.data.success) {
+      return response.data; // { success: true, message: "로그아웃되었습니다." }
+    }
+    throw new Error(response.data.message || '로그아웃에 실패했습니다.');
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Logout failed');
+    const message = error.response?.status === 500
+      ? '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+      : error.response?.data?.message || '네트워크 오류가 발생했습니다.';
+    throw new Error(message);
   }
 }
 
 // 토큰 갱신
 export async function refreshToken(refreshToken) {
   try {
-    // 백엔드 API 미구현: 더미 응답
-    return {
-      access_token: 'fake-new-token',
-    };
-    // 실제 API 호출 (준비 시 활성화)
-    /*
-    const response = await api.post('/refresh', { refresh_token: refreshToken });
-    if (response.data.success) {
-      return response.data.data; // { access_token }
-    }
-    throw new Error(response.data.message || 'Token refresh failed');
-    */
+    const response = await api.post('/token/refresh/', { refresh: refreshToken });
+    return { access_token: response.data.access }; // { access_token }
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Token refresh failed');
   }
