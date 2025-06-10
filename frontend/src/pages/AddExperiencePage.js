@@ -25,7 +25,6 @@ function AddExperiencePage() {
 
   // 경험 직접 추가 - 취소 버튼
   const handleCancelAdd = () => {
-    setTempExperiences([]);
     setShowAddModal(false);
   };
 
@@ -129,7 +128,7 @@ function AddExperiencePage() {
       {/* 자소서에서 경험 추출 모달 */}
       <Modal open={showExtractModal} onClose={() => setShowExtractModal(false)}>
         <h2>자소서에서 경험 추출</h2>
-        <ExtractFromResumeForm onExtract={handleExtractedExperience} />
+        <ExtractFromResumeForm onExtract={handleExtractedExperience} onCancel={() => setShowExtractModal(false)} />
       </Modal>
 
       {/* 경험 삭제 확인 모달 (AlertModal 사용) */}
@@ -213,7 +212,7 @@ function ExperienceList({ experiences, onDelete, onEdit, editingIdx, onSaveEdit,
 }
 
 // 자소서에서 경험 추출 폼
-function ExtractFromResumeForm({ onExtract }) {
+function ExtractFromResumeForm({ onExtract, onCancel }) {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [loading, setLoading] = useState(false);
@@ -265,9 +264,14 @@ function ExtractFromResumeForm({ onExtract }) {
           rows={10}
         />
       </div>
-      <button type="submit" disabled={loading}>
-        {loading ? '추출 중...' : '경험 추출'}
-      </button>
+      <div className="extract-form-buttons">
+        <button type="submit" className="button primary" disabled={loading}>
+          {loading ? '추출 중...' : '경험 추출'}
+        </button>
+        <button type="button" className="button secondary" onClick={onCancel} disabled={loading} style={{ marginLeft: 8 }}>
+          취소
+        </button>
+      </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
     </form>
