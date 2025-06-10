@@ -6,10 +6,18 @@ const api = axios.create({
   timeout: 5000,
 });
 
-// 요청 인터셉터: 모든 요청에 토큰 추가
+const AUTH_WHITELIST = [
+  '/register/',
+  '/token/',
+  '/google-login/',
+  '/token/refresh/',
+  '/logout/',
+];
+
 api.interceptors.request.use(
   (config) => {
-    if (!config.url.endsWith('/logout/')) {
+    const isAuthFree = AUTH_WHITELIST.some((url) => config.url.endsWith(url));
+    if (!isAuthFree) {
       const token = localStorage.getItem('access_token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;

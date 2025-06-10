@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('access_token');
     const storedUser = localStorage.getItem('user');
     const storedRefreshToken = localStorage.getItem('refresh_token');
-
+    
     // storedUser가 유효한 JSON인지 확인
     let parsedUser = null;
     if (storedUser) {
@@ -90,7 +90,7 @@ export function AuthProvider({ children }) {
   // AuthContext.js
   const handleLogout = useCallback(async () => {
     try {
-      await logout(refreshTokenValue); // refreshTokenValue가 없어도 호출 가능
+      await logout(refreshTokenValue); 
       setAccessToken(null);
       setUser(null);
       setRefreshTokenValue(null);
