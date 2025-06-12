@@ -19,6 +19,32 @@ logger = logging.getLogger(__name__)
 # User 모델을 파일 상단에 한 번만 정의하여 사용
 User = get_user_model()
 
+def set_jwt_cookies(response, user):
+    """
+    주어진 응답 객체에 access_token과 refresh_token HttpOnly 쿠키를 설정합니다.
+    """
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
+    response.set_cookie(
+        key='access_token',
+        value=access_token,
+        httponly=True,
+        secure=settings.DEBUG is False,
+        samesite='Lax',
+        # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds() # 필요시 주석 해제
+    )
+    response.set_cookie(
+        key='refresh_token',
+        value=refresh_token,
+        httponly=True,
+        secure=settings.DEBUG is False,
+        samesite='Lax',
+        # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds() # 필요시 주석 해제
+    )
+    return response
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def test_api(request):
@@ -81,12 +107,7 @@ def register(request):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        # 사용자 등록 성공 후 JWT 토큰 생성
-        refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
-        refresh_token = str(refresh)
-
-        logger.info(f"사용자 등록 성공 및 토큰 발급: {user.email}")
+        logger.info(f"사용자 등록 성공: {user.email}")
 
         response = Response({
             'success': True,
@@ -99,23 +120,8 @@ def register(request):
             }
         }, status=status.HTTP_201_CREATED)
 
-        # HttpOnly 쿠키로 access_token과 refresh_token 설정
-        response.set_cookie(
-            key='access_token',
-            value=access_token,
-            httponly=True,
-            secure=settings.DEBUG is False, # HTTPS를 사용할 경우 True로 설정 (프로덕션 환경에서는 True)
-            samesite='Lax', # CSRF 보호를 위해 'Lax' 또는 'Strict' 설정
-            # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds() # 선택 사항: 토큰 만료 시간과 동일하게 설정
-        )
-        response.set_cookie(
-            key='refresh_token',
-            value=refresh_token,
-            httponly=True,
-            secure=settings.DEBUG is False,
-            samesite='Lax',
-            # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds() # 선택 사항
-        )
+        # 헬퍼 함수 호출로 쿠키 설정
+        response = set_jwt_cookies(response, user)
 
         return response
     except ValidationError as e:
@@ -169,41 +175,22 @@ def login(request):
                 'message': '계정이 비활성화되어 있습니다. 관리자에게 문의해주세요.'
             }, status=status.HTTP_403_FORBIDDEN)
 
-        # 사용자 인증 성공 후 토큰 생성
-        refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
-        refresh_token = str(refresh)
 
-        logger.info(f"로그인 성공 및 토큰 발급 - 사용자: {user.email}")
+        logger.info(f"사용자 등록 성공: {user.email}")
 
         response = Response({
             'success': True,
             'data': {
                 'user': {
                     'id': user.id,
-                    'email': user.email,
-                    'name': user.name
+                    'name': user.name,
+                    'email': user.email
                 }
             }
-        }, status=status.HTTP_200_OK)
+        }, status=status.HTTP_201_CREATED)
 
-        # HttpOnly 쿠키로 access_token과 refresh_token 설정
-        response.set_cookie(
-            key='access_token',
-            value=access_token,
-            httponly=True,
-            secure=settings.DEBUG is False,
-            samesite='Lax',
-            # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()
-        )
-        response.set_cookie(
-            key='refresh_token',
-            value=refresh_token,
-            httponly=True,
-            secure=settings.DEBUG is False,
-            samesite='Lax',
-            # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()
-        )
+        # 헬퍼 함수 호출로 쿠키 설정
+        response = set_jwt_cookies(response, user)
 
         return response
 
@@ -281,37 +268,22 @@ def google_login(request):
                 password=None # 구글 로그인은 비밀번호 필요 없음
             )
 
-        # 5. JWT 토큰 생성
-        refresh = RefreshToken.for_user(user)
-        access_token = str(refresh.access_token)
-        refresh_token = str(refresh)
-        user_data = UserSerializer(user).data
-        logger.info(f"JWT tokens generated for Google user: {user.email}")
+
+        logger.info(f"사용자 등록 성공: {user.email}")
 
         response = Response({
             'success': True,
             'data': {
-                'user': user_data
+                'user': {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email
+                }
             }
-        }, status=status.HTTP_200_OK)
+        }, status=status.HTTP_201_CREATED)
 
-        # HttpOnly 쿠키로 access_token과 refresh_token 설정
-        response.set_cookie(
-            key='access_token',
-            value=access_token,
-            httponly=True,
-            secure=settings.DEBUG is False,
-            samesite='Lax',
-            # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()
-        )
-        response.set_cookie(
-            key='refresh_token',
-            value=refresh_token,
-            httponly=True,
-            secure=settings.DEBUG is False,
-            samesite='Lax',
-            # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()
-        )
+        # 헬퍼 함수 호출로 쿠키 설정
+        response = set_jwt_cookies(response, user)
 
         return response
 
