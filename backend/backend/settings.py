@@ -47,11 +47,39 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',  # 기본적으로 모든 요청 허용
     ],
+    # API 스키마 설정을 spectacular로 지정
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+
+# SPECTACULAR_SETTINGS (선택 사항이지만, 문서화 커스터마이징에 유용)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'AI Resume Writer API',
+    'DESCRIPTION': 'AI를 활용해 사용자 맞춤형 자소서를 손쉽게 작성할 수 있는 웹 애플리케이션 API 문서입니다.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,  # 스키마를 YAML 파일로 다운로드할 수 있도록 설정
+    # JWT 인증 스키마 추가 (선택 사항: Bearer Token 사용 시)
+    'SECURITY': [
+        {
+            'BearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            },
+        },
+    ],
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOauth2Info': True,
+        'filter': True,
+    },
 }
 
 # settings.py
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -97,6 +125,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'api',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [

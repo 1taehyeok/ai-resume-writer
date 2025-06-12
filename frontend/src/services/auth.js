@@ -15,24 +15,81 @@ const AUTH_WHITELIST = [
     '/logout/',
 ];
 
-// 요청 인터셉터: 더 이상 access_token을 localStorage에서 가져오지 않습니다.
-// 브라우저가 HttpOnly 쿠키를 자동으로 요청 헤더에 포함합니다.
-api.interceptors.request.use(
-    (config) => {
-        // 더 이상 Authorization 헤더를 수동으로 설정할 필요가 없습니다.
-        // 브라우저가 자동으로 'access_token' HttpOnly 쿠키를 포함하여 보냅니다.
-        // 따라서 이 부분은 주석 처리하거나 제거할 수 있습니다.
-        // const isAuthFree = AUTH_WHITELIST.some((url) => config.url.endsWith(url));
-        // if (!isAuthFree) {
-        //     // const token = localStorage.getItem('access_token'); // 이 줄은 이제 필요 없습니다.
-        //     // if (token) {
-        //     // config.headers.Authorization = `Bearer ${token}`;
-        //     // }
-        // }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+// // 요청 인터셉터: 더 이상 access_token을 localStorage에서 가져오지 않습니다.
+// // 브라우저가 HttpOnly 쿠키를 자동으로 요청 헤더에 포함합니다.
+// api.interceptors.request.use(
+//     (config) => {
+//         // 더 이상 Authorization 헤더를 수동으로 설정할 필요가 없습니다.
+//         // 브라우저가 자동으로 'access_token' HttpOnly 쿠키를 포함하여 보냅니다.
+//         // 따라서 이 부분은 주석 처리하거나 제거할 수 있습니다.
+//         // const isAuthFree = AUTH_WHITELIST.some((url) => config.url.endsWith(url));
+//         // if (!isAuthFree) {
+//         //     // const token = localStorage.getItem('access_token'); // 이 줄은 이제 필요 없습니다.
+//         //     // if (token) {
+//         //     // config.headers.Authorization = `Bearer ${token}`;
+//         //     // }
+//         // }
+//         return config;
+//     },
+//     (error) => Promise.reject(error)
+// );
+
+// // 응답 인터셉터: Access Token 만료 및 갱신 처리
+// api.interceptors.response.use(
+//   (response) => response, // 성공적인 응답은 그대로 반환
+//   async (error) => {
+//       const originalRequest = error.config;
+
+//       // 401 에러이고, 이전에 토큰 갱신을 시도하지 않았으며,
+//       // 토큰 갱신 경로가 아닌 경우에만 토큰 갱신 시도
+//       if (error.response?.status === 401 && !originalRequest._retry && originalRequest.url !== '/token/refresh/') {
+//           originalRequest._retry = true; // 재시도 플래그 설정
+
+//           try {
+//               // Refresh Token으로 Access Token 갱신 요청
+//               // HttpOnly 쿠키 덕분에 브라우저가 자동으로 refresh_token을 포함하여 보냅니다.
+//               const refreshResponse = await api.post('/token/refresh/');
+
+//               // 백엔드에서 새로운 access_token을 Set-Cookie 헤더로 보냈을 것입니다.
+//               // 프론트엔드에서는 새로 받은 access_token의 값을 직접 저장할 필요가 없습니다.
+//               // 브라우저가 자동으로 새 access_token 쿠키를 저장합니다.
+
+//               // 기존 요청의 Authorization 헤더를 업데이트 (선택 사항, HttpOnly라서 불필요할 수도 있음)
+//               // 하지만 백엔드가 응답 본문에 새로운 Access Token을 포함하여 보낸다면
+//               // 이 곳에서 새로운 Access Token을 가져와 수동으로 설정할 수 있습니다.
+//               // 예를 들어, refreshResponse.data.access_token이 있다면:
+//               // originalRequest.headers.Authorization = `Bearer ${refreshResponse.data.access_token}`;
+
+//               // 만약 백엔드가 오직 Set-Cookie로만 새로운 Access Token을 준다면,
+//               // 이 부분을 주석 처리하고 단순히 원래 요청을 재시도하면 브라우저가 새 쿠키를 사용할 것입니다.
+              
+//               // 중요한 점: 백엔드에서 새로운 Access Token을 Set-Cookie로 보내면,
+//               // 이 시점에서 브라우저가 자동으로 해당 쿠키를 갱신합니다.
+//               // 따라서 originalRequest.headers.Authorization을 명시적으로 업데이트할 필요가 없습니다.
+//               // 그냥 원래 요청을 재시도하면 브라우저가 새로 갱신된 HttpOnly access_token 쿠키를 보낼 것입니다.
+
+//               return api(originalRequest); // 원래 요청 재시도
+//           } catch (refreshError) {
+//               console.error('Access Token 갱신 실패:', refreshError);
+//               // Refresh Token 마저 만료되었거나 유효하지 않은 경우
+//               // 사용자에게 로그아웃을 요청하거나 자동으로 로그아웃 처리
+//               // (예: localStorage의 사용자 정보 삭제, 로그인 페이지로 리다이렉트)
+//               // 실제 로그아웃 API 호출을 통해 서버 측 세션도 정리
+//               try {
+//                   await logout(); // 정의된 logout 함수 호출
+//               } catch (e) {
+//                   console.error('로그아웃 처리 중 오류 발생:', e);
+//               }
+//               alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+//               window.location.href = '/login'; // 로그인 페이지로 리다이렉트
+//               return Promise.reject(refreshError);
+//           }
+//       }
+
+//       // 401 에러가 아니거나, 이미 재시도했거나, 토큰 갱신 경로인 경우
+//       return Promise.reject(error);
+//   }
+// );
 
 // 회원가입
 export async function register(name, email, password) {
