@@ -74,7 +74,7 @@ def test_api(request):
 def register(request):
     """
     새로운 사용자를 등록합니다.
-    성공 시 JWT 토큰과 사용자 정보를 반환합니다.
+    성공 시 JWT 토큰과 사용자 정보를 HttpOnly 쿠키로 반환합니다.
     """
     serializer = RegisterSerializer(data=request.data)
     try:
@@ -87,11 +87,10 @@ def register(request):
         refresh_token = str(refresh)
 
         logger.info(f"사용자 등록 성공 및 토큰 발급: {user.email}")
-        return Response({
+
+        response = Response({
             'success': True,
             'data': {
-                'access_token': access_token,
-                'refresh_token': refresh_token,
                 'user': {
                     'id': user.id,
                     'name': user.name,
@@ -99,6 +98,26 @@ def register(request):
                 }
             }
         }, status=status.HTTP_201_CREATED)
+
+        # HttpOnly 쿠키로 access_token과 refresh_token 설정
+        response.set_cookie(
+            key='access_token',
+            value=access_token,
+            httponly=True,
+            secure=settings.DEBUG is False, # HTTPS를 사용할 경우 True로 설정 (프로덕션 환경에서는 True)
+            samesite='Lax', # CSRF 보호를 위해 'Lax' 또는 'Strict' 설정
+            # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds() # 선택 사항: 토큰 만료 시간과 동일하게 설정
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,
+            secure=settings.DEBUG is False,
+            samesite='Lax',
+            # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds() # 선택 사항
+        )
+
+        return response
     except ValidationError as e:
         logger.warning(f"사용자 등록 유효성 검사 실패: {e.detail}")
         return Response({
@@ -118,7 +137,7 @@ def register(request):
 @permission_classes([AllowAny])
 def login(request):
     """
-    사용자를 이메일과 비밀번호로 인증하고 JWT 토큰을 발급합니다.
+    사용자를 이메일과 비밀번호로 인증하고 JWT 토큰을 HttpOnly 쿠키로 발급합니다.
     """
     email = request.data.get('email')
     password = request.data.get('password')
@@ -156,11 +175,10 @@ def login(request):
         refresh_token = str(refresh)
 
         logger.info(f"로그인 성공 및 토큰 발급 - 사용자: {user.email}")
-        return Response({
+
+        response = Response({
             'success': True,
             'data': {
-                'access_token': access_token,
-                'refresh_token': refresh_token,
                 'user': {
                     'id': user.id,
                     'email': user.email,
@@ -168,6 +186,26 @@ def login(request):
                 }
             }
         }, status=status.HTTP_200_OK)
+
+        # HttpOnly 쿠키로 access_token과 refresh_token 설정
+        response.set_cookie(
+            key='access_token',
+            value=access_token,
+            httponly=True,
+            secure=settings.DEBUG is False,
+            samesite='Lax',
+            # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,
+            secure=settings.DEBUG is False,
+            samesite='Lax',
+            # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()
+        )
+
+        return response
 
     except Exception as e:
         logger.critical(f"로그인 처리 중 예상치 못한 서버 오류 발생: {e}", exc_info=True)
@@ -181,7 +219,7 @@ def login(request):
 @permission_classes([AllowAny])
 def google_login(request):
     """
-    Google OAuth2 코드를 사용하여 사용자를 인증하고 JWT 토큰을 발급합니다.
+    Google OAuth2 코드를 사용하여 사용자를 인증하고 JWT 토큰을 HttpOnly 쿠키로 발급합니다.
     """
     try:
         # 1. Google OAuth2 코드 검증
@@ -194,7 +232,6 @@ def google_login(request):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         # 2. Google API로 토큰 교환
-        # requests 라이브러리 import 필요
         token_response = requests.post(
             'https://oauth2.googleapis.com/token',
             data={
@@ -246,17 +283,37 @@ def google_login(request):
 
         # 5. JWT 토큰 생성
         refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
         user_data = UserSerializer(user).data
         logger.info(f"JWT tokens generated for Google user: {user.email}")
 
-        return Response({
+        response = Response({
             'success': True,
             'data': {
-                'access_token': str(refresh.access_token),
-                'refresh_token': str(refresh),
                 'user': user_data
             }
         }, status=status.HTTP_200_OK)
+
+        # HttpOnly 쿠키로 access_token과 refresh_token 설정
+        response.set_cookie(
+            key='access_token',
+            value=access_token,
+            httponly=True,
+            secure=settings.DEBUG is False,
+            samesite='Lax',
+            # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds()
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,
+            secure=settings.DEBUG is False,
+            samesite='Lax',
+            # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()
+        )
+
+        return response
 
     except Exception as e:
         logger.critical(f"Google login error: {e}", exc_info=True)
@@ -270,15 +327,16 @@ def google_login(request):
 @permission_classes([AllowAny])
 def logout(request):
     """
-    사용자를 로그아웃하고 제공된 리프레시 토큰을 블랙리스트에 추가합니다.
+    사용자를 로그아웃하고 HttpOnly 쿠키에 있는 리프레시 토큰을 블랙리스트에 추가합니다.
     """
-    refresh_token = request.data.get('refresh_token')
+    # HttpOnly 쿠키에서 refresh_token 가져오기
+    refresh_token = request.COOKIES.get('refresh_token')
 
     if not refresh_token:
-        logger.warning("로그아웃 실패: 리프레시 토큰이 제공되지 않았습니다.")
+        logger.warning("로그아웃 실패: HttpOnly 쿠키에 리프레시 토큰이 없습니다.")
         return Response({
             'success': False,
-            'message': '로그아웃을 위해서는 리프레시 토큰이 필요합니다.'
+            'message': '로그아웃을 위한 리프레시 토큰(쿠키)이 없습니다.'
         }, status=status.HTTP_400_BAD_REQUEST)
 
     try:
@@ -291,8 +349,7 @@ def logout(request):
             'message': '로그아웃되었습니다.'
         })
 
-        # 클라이언트에서 쿠키를 관리하는 경우, 여기서 쿠키를 삭제하도록 응답에 추가
-        # 프론트엔드에서 쿠키를 직접 삭제하는 것이 일반적이지만, 백엔드에서 지시할 수도 있습니다.
+        # HttpOnly 쿠키 삭제
         response.delete_cookie('access_token')
         response.delete_cookie('refresh_token')
         logger.info("사용자 로그아웃 및 클라이언트 쿠키 삭제 지시 완료.")
@@ -300,8 +357,7 @@ def logout(request):
         return response
 
     except TokenError as e:
-        # 유효하지 않거나 이미 블랙리스트에 있는 토큰인 경우
-        logger.warning(f"로그아웃 실패: 리프레시 토큰 처리 오류 - {e}")
+        logger.warning(f"로그아웃 실패: 유효하지 않거나 이미 블랙리스트에 있는 리프레시 토큰 - {e}")
         return Response({
             'success': False,
             'message': '유효하지 않은 토큰입니다. 이미 로그아웃되었을 수 있습니다.'
