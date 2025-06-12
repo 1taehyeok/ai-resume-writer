@@ -1,3 +1,5 @@
+from rest_framework.exceptions import ValidationError # 이 줄을 추가해주세요.
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -69,94 +71,114 @@ def test_api(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+    """
+    새로운 사용자를 등록합니다.
+    성공 시 JWT 토큰과 사용자 정보를 반환합니다.
+    """
     serializer = RegisterSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        logger.info(f"User registered successfully: {serializer.data.get('email')}")
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    error_messages = []
-    for field, errors in serializer.errors.items():
-        error_messages.extend(errors)
-
-    logger.warning(f"Registration failed: {error_messages[0] if error_messages else 'Invalid input'}")
-    return Response({
-        'success': False,
-        'message': error_messages[0] if error_messages else 'Invalid input'
-    }, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def login(request):
     try:
-        email = request.data.get('email')
-        password = request.data.get('password')
+        # serializer.is_valid(raise_exception=True)를 사용하면
+        # 유효성 검사 실패 시 DRF가 ValidationError를 발생시키고 400 응답을 생성합니다.
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save() # 시리얼라이저는 유효성 검사된 데이터로 User 인스턴스를 생성합니다.
 
-        logger.info(f"Login attempt for email: {email}")
+        # 사용자 등록 성공 후 JWT 토큰 생성
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
 
-        if not email or not password:
-            logger.warning("Login failed: Email or password missing.")
-            return Response({
-                'success': False,
-                'message': '이메일과 비밀번호가 필요합니다.'
-            }, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            user = User.objects.get(email=email)
-            logger.debug(f"User found - ID: {user.id}, Email: {user.email}, Active: {user.is_active}")
-        except User.DoesNotExist:
-            logger.warning(f"Login failed: User with email '{email}' not found.")
-            return Response({
-                'success': False,
-                'message': '잘못된 이메일 또는 비밀번호입니다.'
-            }, status=status.HTTP_401_UNAUTHORIZED)
-
-        if not user.check_password(password):
-            logger.warning(f"Login failed for user '{email}': Incorrect password.")
-            return Response({
-                'success': False,
-                'message': '잘못된 이메일 또는 비밀번호입니다.'
-            }, status=status.HTTP_401_UNAUTHORIZED)
-
-        if not user.is_active:
-            logger.warning(f"Login failed for user '{email}': Account is inactive.")
-            return Response({
-                'success': False,
-                'message': '계정이 비활성화되어 있습니다.'
-            }, status=status.HTTP_403_FORBIDDEN)
-
-        logger.info(f"User authenticated successfully: {user.email}. Attempting token generation...")
-
-        try:
-            refresh = RefreshToken.for_user(user)
-            logger.info("Tokens generated successfully.")
-
-            return Response({
-                'success': True,
-                'data': {
-                    'access_token': str(refresh.access_token),
-                    'refresh_token': str(refresh),
-                    'user': {
-                        'id': user.id,
-                        'email': user.email,
-                        'name': user.name
-                    }
+        logger.info(f"사용자 등록 성공 및 토큰 발급: {user.email}")
+        return Response({
+            'success': True,
+            'data': {
+                'access_token': access_token,
+                'refresh_token': refresh_token,
+                'user': {
+                    'id': user.id,
+                    'name': user.name,
+                    'email': user.email
                 }
-            }, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            logger.error(f"Token generation error for user '{user.email}': {e}", exc_info=True)
-            return Response({
-                'success': False,
-                'message': '토큰 생성 중 오류가 발생했습니다.'
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            }
+        }, status=status.HTTP_201_CREATED)
+    except ValidationError as e:
+        # DRF의 ValidationError는 이미 상세한 에러 메시지를 포함합니다.
+        logger.warning(f"사용자 등록 유효성 검사 실패: {e.detail}")
+        return Response({
+            'success': False,
+            'message': '제출된 데이터에 오류가 있습니다.',
+            'errors': e.detail
+        }, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        logger.critical(f"Unexpected error during login process: {e}", exc_info=True)
+        logger.critical(f"사용자 등록 중 예상치 못한 서버 오류 발생: {e}", exc_info=True)
         return Response({
             'success': False,
             'message': '서버 오류가 발생했습니다.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    """
+    사용자를 이메일과 비밀번호로 인증하고 JWT 토큰을 발급합니다.
+    """
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    logger.info(f"로그인 시도 - 이메일: {email}")
+
+    if not email or not password:
+        logger.warning("로그인 실패: 이메일 또는 비밀번호가 제공되지 않았습니다.")
+        return Response({
+            'success': False,
+            'message': '이메일과 비밀번호가 필요합니다.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Django의 authenticate 함수를 사용하여 사용자 인증 시도
+        # CustomUserManager에서 email을 USERNAME_FIELD로 설정했으므로 가능
+        user = authenticate(request, username=email, password=password)
+
+        if user is None:
+            logger.warning(f"로그인 실패: 잘못된 자격 증명 (이메일: {email})")
+            return Response({
+                'success': False,
+                'message': '이메일 또는 비밀번호가 잘못되었습니다.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        if not user.is_active:
+            logger.warning(f"로그인 실패: 비활성화된 계정 (이메일: {user.email})")
+            return Response({
+                'success': False,
+                'message': '계정이 비활성화되어 있습니다. 관리자에게 문의해주세요.'
+            }, status=status.HTTP_403_FORBIDDEN)
+
+        # 사용자 인증 성공 후 토큰 생성
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        logger.info(f"로그인 성공 및 토큰 발급 - 사용자: {user.email}")
+        return Response({
+            'success': True,
+            'data': {
+                'access_token': access_token,
+                'refresh_token': refresh_token,
+                'user': {
+                    'id': user.id,
+                    'email': user.email,
+                    'name': user.name
+                }
+            }
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        logger.critical(f"로그인 처리 중 예상치 못한 서버 오류 발생: {e}", exc_info=True)
+        return Response({
+            'success': False,
+            'message': '로그인 중 서버 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -242,6 +264,53 @@ def google_login(request):
             'message': '서버 오류가 발생했습니다.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def logout(request):
+    """
+    사용자를 로그아웃하고 제공된 리프레시 토큰을 블랙리스트에 추가합니다.
+    """
+    refresh_token = request.data.get('refresh_token')
+
+    if not refresh_token:
+        logger.warning("로그아웃 실패: 리프레시 토큰이 제공되지 않았습니다.")
+        return Response({
+            'success': False,
+            'message': '로그아웃을 위해서는 리프레시 토큰이 필요합니다.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        token = RefreshToken(refresh_token)
+        token.blacklist() # JWT 블랙리스트에 토큰 추가
+        logger.info("리프레시 토큰이 성공적으로 블랙리스트에 추가되었습니다.")
+
+        response = Response({
+            'success': True,
+            'message': '로그아웃되었습니다.'
+        })
+
+        # 클라이언트에서 쿠키를 관리하는 경우, 여기서 쿠키를 삭제하도록 응답에 추가
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        logger.info("사용자 로그아웃 및 클라이언트 쿠키 삭제 지시 완료.")
+
+        return response
+
+    except TokenError as e:
+        # 유효하지 않거나 이미 블랙리스트에 있는 토큰인 경우
+        logger.warning(f"로그아웃 실패: 리프레시 토큰 처리 오류 - {e}")
+        return Response({
+            'success': False,
+            'message': '유효하지 않은 토큰입니다. 이미 로그아웃되었을 수 있습니다.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.critical(f"로그아웃 처리 중 예상치 못한 서버 오류 발생: {e}", exc_info=True)
+        return Response({
+            'success': False,
+            'message': '로그아웃 중 서버 오류가 발생했습니다.'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def logout(request):
