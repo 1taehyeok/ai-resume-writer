@@ -33,7 +33,7 @@ def set_jwt_cookies(response, user):
         httponly=True,
         secure=settings.DEBUG is False,
         samesite='Lax',
-        # max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds() # 필요시 주석 해제
+        max_age=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'].total_seconds() # 필요시 주석 해제
     )
     response.set_cookie(
         key='refresh_token',
@@ -41,7 +41,7 @@ def set_jwt_cookies(response, user):
         httponly=True,
         secure=settings.DEBUG is False,
         samesite='Lax',
-        # max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds() # 필요시 주석 해제
+        max_age=settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds() # 필요시 주석 해제
     )
     return response
 

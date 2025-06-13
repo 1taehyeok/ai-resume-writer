@@ -76,7 +76,6 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-# settings.py
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=100),
@@ -105,6 +104,14 @@ SIMPLE_JWT = {
     
     'JTI_CLAIM': 'jti',
     
+    'AUTH_COOKIE': 'access_token', # access_token 쿠키 이름 (예: access_token)
+    'AUTH_COOKIE_REFRESH': 'refresh_token', # refresh_token 쿠키 이름 (예: refresh_token)
+    'AUTH_COOKIE_DOMAIN': None, # 개발 시 None (localhost) 또는 'localhost'
+    'AUTH_COOKIE_SECURE': False, # 개발 시 False, 배포 시 True (HTTPS)
+    'AUTH_COOKIE_HTTP_ONLY': True, # HttpOnly 여부, 반드시 True여야 함
+    'AUTH_COOKIE_SAMESITE': 'Lax', # 'Lax' 또는 'None' (None일 경우 AUTH_COOKIE_SECURE=True 필수)
+    'AUTH_COOKIE_PATH': '/', # <-- 이 라인을 추가하세요!
+
     # 토큰 검증 시 사용자 정보 검색을 위한 쿼리셋 설정
     'USER_QUERYSET': 'api.models.User.objects.all',
     'USER_ID_FIELD': 'id',
