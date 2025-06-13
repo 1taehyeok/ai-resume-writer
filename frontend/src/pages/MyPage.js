@@ -58,6 +58,7 @@ function ProfileUpdateForm() {
     }
 
     try {
+      console.log(updateData)
       const response = await apiUpdateProfile(updateData);
       setSuccessMessage(response.message);
       // 사용자 이름이 변경되었을 경우, AuthContext의 user 정보 업데이트

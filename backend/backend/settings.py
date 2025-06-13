@@ -80,7 +80,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
     # 'ACCESS_TOKEN_LIFETIME': timedelta(seconds=100),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ROTATE_REFRESH_TOKENS': False,
+    'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
     'UPDATE_LAST_LOGIN': False,
 
@@ -94,8 +94,6 @@ SIMPLE_JWT = {
 
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',  # User 모델의 id 필드를 사용
-    'USER_ID_CLAIM': 'user_id',  # 토큰에서 사용자 식별자로 사용
     'USER_AUTHENTICATION_RULE': 'api.authentication.custom_user_authentication_rule',
     
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
@@ -109,14 +107,15 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_DOMAIN': None, # 개발 시 None (localhost) 또는 'localhost'
     'AUTH_COOKIE_SECURE': False, # 개발 시 False, 배포 시 True (HTTPS)
     'AUTH_COOKIE_HTTP_ONLY': True, # HttpOnly 여부, 반드시 True여야 함
-    'AUTH_COOKIE_SAMESITE': 'Lax', # 'Lax' 또는 'None' (None일 경우 AUTH_COOKIE_SECURE=True 필수)
+    'AUTH_COOKIE_SAMESITE': 'None', # 'Lax' 또는 'None' (None일 경우 AUTH_COOKIE_SECURE=True 필수)
     'AUTH_COOKIE_PATH': '/', # <-- 이 라인을 추가하세요!
 
     # 토큰 검증 시 사용자 정보 검색을 위한 쿼리셋 설정
     'USER_QUERYSET': 'api.models.User.objects.all',
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
+    'USER_ID_FIELD': 'id',  # User 모델의 id 필드를 사용
+    'USER_ID_CLAIM': 'user_id',  # 토큰에서 사용자 식별자로 사용
 }
+
 
 # Application definition
 
@@ -163,6 +162,54 @@ TEMPLATES = [
         },
     },
 ]
+
+# backend/backend/settings.py
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG', # 콘솔 핸들러 레벨
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': 'INFO', # 파일 핸들러 레벨
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'django.log',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO', # Django 자체 로그 레벨
+            'propagate': False,
+        },
+        'api': { # <-- 이 로거를 추가하거나 확인
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG', # api 앱의 로그를 DEBUG 레벨로 출력
+            'propagate': False, # 상위 로거로 전파하지 않음
+        },
+        # 다른 앱의 로거도 필요하면 추가
+    },
+    'root': { # 아무 로거도 지정하지 않은 경우의 기본 로거
+        'handlers': ['console', 'file'],
+        'level': 'WARNING', # WARNING 이상의 로그만 출력 (기본)
+    }
+}
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
