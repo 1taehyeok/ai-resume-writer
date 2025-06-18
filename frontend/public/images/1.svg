@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<svg width="897.408" height="234.90953545232273" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" version="1.1">
+ <style class="text-font-style fontImports" data-font-family="Roboto">@import url(&#x27;https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=block&#x27;);</style>
+ <g class="layer">
+  <title>Layer 1</title>
+  <g id="items">
+   <g id="blend">
+    <g data-item-order="-320101" id="g-root-cp_1_top-1_18gbcc4m9fuo4-fill" transform="translate(50 134)"/>
+    <g data-item-order="-320094" id="g-root-cp_1_Number_m9uat0m9ftvy-fill" transform="translate(38 158)">
+     <g fill="#4e88e7" id="cp_1_Number_m9uat0m9ftvy-fill">
+      <g id="svg_7">
+       <path d="m584,-116l60,0l0,60l-60,0l0,-60zm60,-12l30,42l-30,42l0,-84z" id="svg_8"/>
+      </g>
+     </g>
+     <g fill="#4e88e7" id="svg_1">
+      <g id="svg_9">
+       <path d="m572,-112c0,-2.21 1.79,-4 4,-4l8,0l0,68l-8,0c-2.21,0 -4,-1.79 -4,-4l0,-60z" id="svg_10"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320077" id="g-root-cp_2_top-2_hu0sokm9fuo9-fill" transform="translate(350 134)"/>
+    <g data-item-order="-320070" id="g-root-cp_2_Number_1_de7ak4m9fvgj-fill" transform="translate(338 158)">
+     <g fill="#3cc583" id="cp_2_Number_1_de7ak4m9fvgj-fill">
+      <g id="svg_11">
+       <path d="m584,-116l60,0l0,60l-60,0l0,-60zm60,-12l30,42l-30,42l0,-84z" id="svg_12"/>
+      </g>
+     </g>
+     <g fill="#3cc583" id="svg_2">
+      <g id="svg_13">
+       <path d="m572,-112c0,-2.21 1.79,-4 4,-4l8,0l0,68l-8,0c-2.21,0 -4,-1.79 -4,-4l0,-60z" id="svg_14"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320053" id="g-root-cp_3_top-3_4j6recm9ft3i-fill" transform="translate(650 134)"/>
+    <g data-item-order="-320046" id="g-root-cp_3_Number_2_3d99wm9ftvs-fill" transform="translate(638 158)">
+     <g fill="#92bd39" id="cp_3_Number_2_3d99wm9ftvs-fill">
+      <g id="svg_15">
+       <path d="m584,-116l60,0l0,60l-60,0l0,-60zm60,-12l30,42l-30,42l0,-84z" id="svg_16"/>
+      </g>
+     </g>
+     <g fill="#92bd39" id="svg_3">
+      <g id="svg_17">
+       <path d="m572,-112c0,-2.21 1.79,-4 4,-4l8,0l0,68l-8,0c-2.21,0 -4,-1.79 -4,-4l0,-60z" id="svg_18"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320027" id="g-root-cp_1_bottom-1_1uont4km9fugz-fill" transform="translate(50 248)"/>
+    <g data-item-order="-320017" id="g-root-cp_2_bottom-2_1lt0svom9fv9p-fill" transform="translate(350 248)"/>
+    <g data-item-order="-320007" id="g-root-cp_3_bottom-3_1hdtrucm9fsw7-fill" transform="translate(650 248)"/>
+    <g data-item-order="0" id="g-root-tx__1hdtrucm9fsw9-fill" transform="translate(380 62)">
+     <g fill="#484848" id="tx__1hdtrucm9fsw9-fill">
+      <g id="svg_19">
+       <text font-family="Roboto, sans-serif" font-size="20px" id="svg_20" x="562" y="-138">
+        <tspan id="svg_21" x="574.55" y="-104">논스톱 자소서 생성 과정</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx_1_qrj86sm9fswb-fill" transform="translate(68 188)">
+     <g fill="#ffffff" id="tx_1_qrj86sm9fswb-fill">
+      <g id="svg_22">
+       <text font-family="Roboto, sans-serif" font-size="20px" font-weight="bold" id="svg_23" x="562" y="-138">
+        <tspan id="svg_24" x="578.09" y="-102">1</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx__142d9h0m9fuh6-fill" transform="translate(152 179)">
+     <g fill="#4e88e7" id="tx__142d9h0m9fuh6-fill">
+      <g id="svg_25">
+       <text font-family="Roboto, sans-serif" font-size="20px" font-weight="bold" id="svg_26" x="562" y="-138">
+        <tspan id="svg_27" x="574" y="-104">경험 생성</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx__mbpq2cm9ftok-fill" transform="translate(452 179)">
+     <g fill="#3cc583" id="tx__mbpq2cm9ftok-fill">
+      <g id="svg_28">
+       <text font-family="Roboto, sans-serif" font-size="20px" font-weight="bold" id="svg_29" x="562" y="-138">
+        <tspan id="svg_30" x="574" y="-102">경험 매핑</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx_2_dg2ptgm9fuh9-fill" transform="translate(368 188)">
+     <g fill="#ffffff" id="tx_2_dg2ptgm9fuh9-fill">
+      <g id="svg_31">
+       <text font-family="Roboto, sans-serif" font-size="20px" font-weight="bold" id="svg_32" x="562" y="-138">
+        <tspan id="svg_33" x="578.09" y="-102">2</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx_3_58oj8m9fswf-fill" transform="translate(668 188)">
+     <g fill="#ffffff" id="tx_3_58oj8m9fswf-fill">
+      <g id="svg_34">
+       <text font-family="Roboto, sans-serif" font-size="20px" font-weight="bold" id="svg_35" x="562" y="-138">
+        <tspan id="svg_36" x="578.09" y="-102">3</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx__9097p0m9fv9i-fill" transform="translate(752 179)">
+     <g fill="#92bd39" id="tx__9097p0m9fv9i-fill">
+      <g id="svg_37">
+       <text font-family="Roboto, sans-serif" font-size="20px" font-weight="bold" id="svg_38" x="562" y="-138">
+        <tspan id="svg_39" x="574" y="-102">자소서 생성</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx__1qapq9gm9fu9s-fill" transform="translate(98 260)">
+     <g fill="#3a4455" id="tx__1qapq9gm9fu9s-fill">
+      <g id="svg_40">
+       <text font-family="Roboto, sans-serif" font-size="15px" id="svg_41" x="562" y="-138">
+        <tspan id="svg_42" x="574" y="-107">기존 자소서에서 경험 추출</tspan>
+        <tspan id="svg_43" x="574" y="-89">&amp;</tspan>
+        <tspan id="svg_44" x="574" y="-71">나만의 특별한 경험 기록</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx__1czvoz8m9fsox-fill" transform="translate(434 260)">
+     <g fill="#374840" id="tx__1czvoz8m9fsox-fill">
+      <g id="svg_45">
+       <text font-family="Roboto, sans-serif" font-size="15px" id="svg_46" x="562" y="-138">
+        <tspan id="svg_47" x="574" y="-110">문항별 최적의</tspan>
+        <tspan id="svg_48" x="574" y="-92">경험을 연결</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx__1448oqcm9fthm-fill" transform="translate(704 260)">
+     <g fill="#424736" id="tx__1448oqcm9fthm-fill">
+      <g id="svg_49">
+       <text font-family="Roboto, sans-serif" font-size="15px" id="svg_50" x="562" y="-138">
+        <tspan id="svg_51" x="574" y="-110">기업의 Needs에 맞는</tspan>
+        <tspan id="svg_52" x="574" y="-92">가치관을 중심으로 생성</tspan>
+       </text>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320101" id="g-root-cp_1_top-1_18gbcc4m9fuo4-stroke" transform="translate(50 134)">
+     <g fill="none" id="cp_1_top-1_18gbcc4m9fuo4-stroke" stroke="#4e88e7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_53">
+       <path d="m836,-110l0,96m-264,0l0,-96m264,0l0,-2c0,-8.84 -8.15,-16 -18.21,-16l-227.58,0c-10.06,0 -18.21,7.16 -18.21,16l0,2" id="svg_54"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320094" id="g-root-cp_1_Number_m9uat0m9ftvy-stroke" transform="translate(38 158)">
+     <g fill="none" id="cp_1_Number_m9uat0m9ftvy-stroke" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_55">
+       <path d="m584,-116l60,0l0,-12l30,42l-30,42l0,-12l-60,0" id="svg_56"/>
+      </g>
+     </g>
+     <g fill="none" id="svg_4" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_57">
+       <path d="m572,-52c0,-2.21 1.79,-4 4,-4l8,0l0,8l-8,0c-2.21,0 -4,-1.79 -4,-4zm12,-64l-8,0c-2.21,0 -4,1.79 -4,4l0,60c0,2.21 1.79,4 4,4l8,0" id="svg_58"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320077" id="g-root-cp_2_top-2_hu0sokm9fuo9-stroke" transform="translate(350 134)">
+     <g fill="none" id="cp_2_top-2_hu0sokm9fuo9-stroke" stroke="#3cc583" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_59">
+       <path d="m836,-110l0,96m-264,0l0,-96m264,0l0,-2c0,-8.84 -8.15,-16 -18.21,-16l-227.58,0c-10.06,0 -18.21,7.16 -18.21,16l0,2" id="svg_60"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320070" id="g-root-cp_2_Number_1_de7ak4m9fvgj-stroke" transform="translate(338 158)">
+     <g fill="none" id="cp_2_Number_1_de7ak4m9fvgj-stroke" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_61">
+       <path d="m584,-116l60,0l0,-12l30,42l-30,42l0,-12l-60,0" id="svg_62"/>
+      </g>
+     </g>
+     <g fill="none" id="svg_5" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_63">
+       <path d="m572,-52c0,-2.21 1.79,-4 4,-4l8,0l0,8l-8,0c-2.21,0 -4,-1.79 -4,-4zm12,-64l-8,0c-2.21,0 -4,1.79 -4,4l0,60c0,2.21 1.79,4 4,4l8,0" id="svg_64"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320053" id="g-root-cp_3_top-3_4j6recm9ft3i-stroke" transform="translate(650 134)">
+     <g fill="none" id="cp_3_top-3_4j6recm9ft3i-stroke" stroke="#92bd39" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_65">
+       <path d="m836,-110l0,96m-264,0l0,-96m264,0l0,-2c0,-8.84 -8.15,-16 -18.21,-16l-227.58,0c-10.06,0 -18.21,7.16 -18.21,16l0,2" id="svg_66"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320046" id="g-root-cp_3_Number_2_3d99wm9ftvs-stroke" transform="translate(638 158)">
+     <g fill="none" id="cp_3_Number_2_3d99wm9ftvs-stroke" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_67">
+       <path d="m584,-116l60,0l0,-12l30,42l-30,42l0,-12l-60,0" id="svg_68"/>
+      </g>
+     </g>
+     <g fill="none" id="svg_6" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_69">
+       <path d="m572,-52c0,-2.21 1.79,-4 4,-4l8,0l0,8l-8,0c-2.21,0 -4,-1.79 -4,-4zm12,-64l-8,0c-2.21,0 -4,1.79 -4,4l0,60c0,2.21 1.79,4 4,4l8,0" id="svg_70"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320027" id="g-root-cp_1_bottom-1_1uont4km9fugz-stroke" transform="translate(50 248)">
+     <g fill="none" id="cp_1_bottom-1_1uont4km9fugz-stroke" stroke="#4e88e7" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_71">
+       <path d="m836,-128l0,84m-264,0l0,-84m264,84l0,2c0,8.84 -8.15,16 -18.21,16l-227.58,0c-10.06,0 -18.21,-7.16 -18.21,-16l0,-2" id="svg_72"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320017" id="g-root-cp_2_bottom-2_1lt0svom9fv9p-stroke" transform="translate(350 248)">
+     <g fill="none" id="cp_2_bottom-2_1lt0svom9fv9p-stroke" stroke="#3cc583" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_73">
+       <path d="m836,-128l0,84m-264,0l0,-84m264,84l0,2c0,8.84 -8.15,16 -18.21,16l-227.58,0c-10.06,0 -18.21,-7.16 -18.21,-16l0,-2" id="svg_74"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="-320007" id="g-root-cp_3_bottom-3_1hdtrucm9fsw7-stroke" transform="translate(650 248)">
+     <g fill="none" id="cp_3_bottom-3_1hdtrucm9fsw7-stroke" stroke="#92bd39" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-width="2">
+      <g id="svg_75">
+       <path d="m836,-128l0,84m-264,0l0,-84m264,84l0,2c0,8.84 -8.15,16 -18.21,16l-227.58,0c-10.06,0 -18.21,-7.16 -18.21,-16l0,-2" id="svg_76"/>
+      </g>
+     </g>
+    </g>
+    <g data-item-order="0" id="g-root-tx__1hdtrucm9fsw9-stroke" transform="translate(380 62)"/>
+    <g data-item-order="0" id="g-root-tx_1_qrj86sm9fswb-stroke" transform="translate(68 188)"/>
+    <g data-item-order="0" id="g-root-tx__142d9h0m9fuh6-stroke" transform="translate(152 179)"/>
+    <g data-item-order="0" id="g-root-tx__mbpq2cm9ftok-stroke" transform="translate(452 179)"/>
+    <g data-item-order="0" id="g-root-tx_2_dg2ptgm9fuh9-stroke" transform="translate(368 188)"/>
+    <g data-item-order="0" id="g-root-tx_3_58oj8m9fswf-stroke" transform="translate(668 188)"/>
+    <g data-item-order="0" id="g-root-tx__9097p0m9fv9i-stroke" transform="translate(752 179)"/>
+    <g data-item-order="0" id="g-root-tx__1qapq9gm9fu9s-stroke" transform="translate(98 260)"/>
+    <g data-item-order="0" id="g-root-tx__1czvoz8m9fsox-stroke" transform="translate(434 260)"/>
+    <g data-item-order="0" id="g-root-tx__1448oqcm9fthm-stroke" transform="translate(704 260)"/>
+   </g>
+  </g>
+ </g>
+</svg>

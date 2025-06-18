@@ -1,0 +1,86 @@
+  .card-swap-container {
+    /* 기존 absolute 포지셔닝을 제거하고 relative 또는 static으로 변경 */
+    position: relative; /* 부모 요소(landing-image-section)의 flexbox에 의해 정렬되도록 */
+    bottom: unset; /* 제거 */
+    right: unset; /* 제거 */
+    transform: none; /* 제거 */
+    transform-origin: center center; /* 중앙으로 변경 */
+    perspective: 900px;
+    overflow: visible;
+    /* width와 height를 명시적으로 설정하여 CardSwap의 크기를 고정 */
+    width: 450px; /* 이 값은 CardSwap 컴포넌트의 width prop과 일치해야 합니다. */
+    height: 350px; /* 이 값은 CardSwap 컴포넌트의 height prop과 일치해야 합니다. */
+  }
+  
+  .card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 12px;
+    border: 1px solid #000;
+    background: #fff;
+  
+    transform-style: preserve-3d;
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* 미디어 쿼리는 필요에 따라 조정 */
+  @media (max-width: 768px) {
+    .card-swap-container {
+      /* 모바일에서 크기 조절 */
+      width: 350px; /* 더 작게 */
+      height: 280px; /* 더 작게 */
+      transform: none; /* 기존 transform 제거 */
+    }
+  }
+
+  @media (max-width: 480px) {
+    .card-swap-container {
+      /* 더 작은 모바일에서 크기 조절 */
+      width: 280px; /* 더 작게 */
+      height: 224px; /* 더 작게 */
+      transform: none; /* 기존 transform 제거 */
+    }
+  }
+  .card-number {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15em; /* 매우 큰 숫자 */
+    font-weight: bold;
+    opacity: 0.2; /* 투명도 조절 */
+    color: #ffffff; /* 숫자 색상 */
+    z-index: 1; /* 다른 내용 뒤로 보내기 */
+    line-height: 1;
+  }
+
+  .card-icon {
+      font-size: 2.5em; /* 아이콘 크기 */
+      margin-bottom: 15px;
+      color: #000; /* 아이콘 색상 (예시) */
+      z-index: 2; /* 아이콘이 숫자 위에 오도록 */
+  }
+
+  .card h3 {
+      font-size: 1.8em; /* 텍스트 크기 */
+      font-weight: 600;
+      margin: 0;
+      text-align: center;
+      z-index: 2;
+  }
+  
+/*   
+  @media (max-width: 768px) {
+    .card-swap-container {
+      transform: scale(0.75) translate(25%, 25%);
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .card-swap-container {
+      transform: scale(0.55) translate(25%, 25%);
+    }
+  } */
+   

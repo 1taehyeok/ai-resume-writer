@@ -1,4 +1,6 @@
 import Button from '../components/Button';
+import Magnet from '../components/Magnet';
+import CardSwap, { Card } from '../components/CardSwap'
 import ReviewCard from '../components/ReviewCard';
 import '../styles/LandingPage.css';
 
@@ -12,16 +14,60 @@ function LandingPage() {
     <div className="landing-page">
       <header className="landing-header">
         <h1>논스톱 AI 자소서 생성기</h1>
+        
+        
         <p>AI로 쉽고 빠르게 나만의 커버레터를 완성하세요!</p>
         <div className="buttons">
-          <Button text="Get Started" onClick={() => window.location.href = '/add-experience'} />
+          
+          <Magnet
+            padding={20} // 마우스가 얼마나 가까이 왔을 때 자석 효과가 시작될지 설정 (기본값 100)
+            magnetStrength={3} // 자석 효과의 강도 (기본값 2)
+          >
+            <Button text="Get Started" onClick={() => window.location.href = '/add-experience'} />
+          </Magnet>
           <Button text="Pricing" variant="secondary" onClick={() => window.location.href = '/subscription'} />
           <Button text="Learn More" variant="secondary" onClick={scrollToHowItWorks} />
         </div>
       </header>
       <section className="landing-image-section">
-        <img src="/images/person-at-desk.svg" alt="Person at desk" className="landing-image" />
-      </section>
+      
+        <div className="card-swap-text-container"> {/* 텍스트를 위한 컨테이너 추가 */}
+              <h2>논스톱 AI 자소서 생성기</h2>
+              <p>Just look at it go!</p>
+          </div>
+          <CardSwap width={500} height={400} cardDistance={60} verticalDistance={70} delay={5000} pauseOnHover={true} skewAmount={6} easing="elastic">
+            <Card customClass="styled-card first-card">
+              <span className="card-number">1</span> {/* 스크린샷의 숫자 1 */}
+              {/* 여기에 다른 내용도 추가할 수 있습니다. */}
+            </Card>
+            <Card customClass="styled-card">
+              {/* 아이콘을 위한 div 또는 span */}
+              <div className="card-icon">
+                <img src="/images/1.svg" alt="Person at desk" className="landing-image" />
+              </div>
+              <h3>Customizable</h3>
+            </Card>
+            <Card customClass="styled-card">
+              <div className="card-icon">
+                  {/* <i className="fas fa-wrench"></i> */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                      <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z" clipRule="evenodd" />
+                  </svg>
+              </div>
+              <h3>Reliable</h3>
+            </Card>
+            <Card customClass="styled-card">
+              <div className="card-icon">
+                  {/* <i className="fas fa-bezier-curve"></i> */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                      <path fillRule="evenodd" d="M11.077 4.167a.75.75 0 0 1 .198 1.125l-3.09 3.09a.75.75 0 0 1-1.124-.198l-3.09-3.09a.75.75 0 0 1 1.124-1.124l3.09 3.09 3.09-3.09a.75.75 0 0 1 1.125.198ZM21.722 8.354a.75.75 0 0 0-.198-1.125l-3.09-3.09a.75.75 0 0 0-1.124.198l-3.09 3.09a.75.75 0 0 0 1.124 1.124l3.09-3.09 3.09 3.09a.75.75 0 0 0 .198-1.125ZM6.596 16.596a.75.75 0 0 1 1.06 0l4.75 4.75a.75.75 0 0 1-1.06 1.06l-4.75-4.75a.75.75 0 0 1 0-1.06Zm10.81-4.25a.75.75 0 0 1-.198-1.125l-3.09-3.09a.75.75 0 0 1 1.124-.198l3.09 3.09a.75.75 0 0 1-1.124 1.124l-3.09-3.09-3.09 3.09a.75.75 0 0 1-.198-1.125Z" clipRule="evenodd" />
+                  </svg>
+              </div>
+              <h3>Smooth</h3>
+            </Card>
+          </CardSwap>
+        </section>
+
       <section className="key-benefits">
         <h2>Key Benefits</h2>
         <ul className="benefit-list">
