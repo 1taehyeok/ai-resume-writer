@@ -17,7 +17,7 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # settings.py
-AUTH_USER_MODEL = 'api.User'  # 이 설정이 있어야 합니다
+AUTH_USER_MODEL = 'authentication.User'  # 이 설정이 있어야 합니다
 
 # 이 설정이 없거나 'auth.User'로 되어 있다면 수정이 필요합니다
 
@@ -125,6 +125,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'api',
+    'authentication',
     'drf_spectacular',
 ]
 

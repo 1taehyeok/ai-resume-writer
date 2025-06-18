@@ -23,6 +23,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, Sp
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
+    path('auth/', include('authentication.urls')),
     
     # API 문서 관련 URLS
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'), # API 스키마 자체를 제공
