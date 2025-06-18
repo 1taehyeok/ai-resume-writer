@@ -1,127 +1,130 @@
 import { createContext, useState, useEffect, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { logout } from '../services/auth';
+import { logout as authServiceLogout } from '../services/auth'; // logout 함수 이름 변경 충돌 방지
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  // accessToken과 refreshTokenValue는 이제 클라이언트에서 직접 관리하지 않습니다.
-  // 대신, 백엔드 응답에서 사용자 정보만 받아서 설정합니다.
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // 초기 인증 상태 로드 (쿠키는 백엔드에서 관리하므로, 사용자 정보만 확인)
+  // 초기 인증 상태 로드
   useEffect(() => {
-      // 서버에서 사용자 정보를 가져오는 API를 호출하거나,
-      // 로그인/회원가입 시 받은 user 정보를 기반으로 초기화할 수 있습니다.
-      // 여기서는 localStorage에서 user 정보만 가져오는 기존 로직을 유지합니다.
-      const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem('user');
 
-      let parsedUser = null;
-      if (storedUser) {
-          try {
-              parsedUser = JSON.parse(storedUser);
-              // HttpOnly 쿠키로 로그인 상태를 판단하므로,
-              // user 정보가 있으면 일단 로그인된 것으로 간주할 수 있습니다.
-              // 실제로는 백엔드에 토큰 유효성을 확인하는 엔드포인트가 있으면 더 안전합니다.
-              setUser(parsedUser);
-              setIsAuthenticated(true);
-          } catch (error) {
-              console.error('Invalid user data in localStorage:', error);
-              localStorage.removeItem('user');
-              setIsAuthenticated(false);
-          }
-      } else {
-          setIsAuthenticated(false);
+    let parsedUser = null;
+    if (storedUser) {
+      try {
+        parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+        // 서버에 HttpOnly 쿠키 기반의 로그인 상태 유효성을 확인하는 엔드포인트가 있다면
+        // 여기에 해당 호출을 추가하여 로그인 상태를 더욱 확실하게 검증할 수 있습니다.
+        // 예: checkAuthStatus();
+      } catch (error) {
+        console.error('Invalid user data in localStorage:', error);
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
       }
-      setLoading(false);
+    } else {
+      setIsAuthenticated(false);
+    }
+    setLoading(false);
   }, []);
 
   // Axios 응답 인터셉터: 401 응답 시 처리
-  // HttpOnly 쿠키는 JavaScript에서 직접 접근할 수 없으므로,
-  // refresh token을 직접 갱신하는 대신, 401 에러를 받으면
-  // 자동적으로 재로그인 또는 로그아웃 처리하도록 유도합니다.
   useEffect(() => {
-      const interceptor = axios.interceptors.response.use(
-          (response) => response,
-          async (error) => {
-              const originalRequest = error.config;
-              // 401 에러가 발생하고, 로그인 또는 토큰 갱신 요청이 아닌 경우
-              if (error.response?.status === 401 && !originalRequest._retry) {
-                  originalRequest._retry = true; // 무한 재시도 방지
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const originalRequest = error.config;
+        // 401 에러가 발생하고, 로그인, 회원가입, 로그아웃, 토큰 갱신 요청이 아닌 경우
+        // (이러한 요청들은 스스로 인증 로직을 가지고 있으므로 무한 루프 방지)
+        const isAuthRelatedPath = [
+          '/api/register/',
+          '/api/token/',
+          '/api/google-login/',
+          '/api/logout/',
+          '/api/token/refresh/',
+        ].some(path => originalRequest.url.endsWith(path));
 
-                  // HttpOnly 쿠키를 사용하므로, 토큰 갱신은 백엔드가 처리합니다.
-                  // 만약 401이 발생했다면, access token이 만료되었거나 유효하지 않다는 의미입니다.
-                  // 이때는 프론트엔드에서 할 수 있는 것이 거의 없습니다.
-                  // 백엔드의 Simple JWT 설정에서 refresh token이 access token을 자동으로 갱신하도록 설정했다면,
-                  // 이 401 에러는 refresh token까지 만료된 경우일 가능성이 높습니다.
-                  
-                  console.log('401 Unauthorized error detected. Attempting re-authentication or logging out.');
-                  // 강제 로그아웃 처리
-                  handleLogout(); 
-                  return Promise.reject(error);
-              }
-              return Promise.reject(error);
+        if (error.response?.status === 401 && !originalRequest._retry && !isAuthRelatedPath) {
+          originalRequest._retry = true; // 무한 재시도 방지
+
+          console.log('401 Unauthorized error detected. Attempting to refresh token via backend or logging out.');
+          // HttpOnly 쿠키를 사용하므로, refresh token 갱신은 백엔드가 자동으로 처리합니다.
+          // 여기서 401이 발생했다는 것은 access token이 만료되었거나 유효하지 않다는 의미입니다.
+          // 백엔드의 Simple JWT 설정 (ROTATE_REFRESH_TOKENS, BLACKLIST_AFTER_ROTATION)에 따라
+          // refresh token으로 access token을 재발급 시도하고, 성공하면 원래 요청을 재시도합니다.
+          // 만약 refresh token도 만료되었다면, 백엔드에서 401 또는 다른 에러를 보낼 것이고,
+          // 그 경우 프론트엔드는 사용자를 강제로 로그아웃시켜야 합니다.
+
+          try {
+            // 백엔드 /api/token/refresh/ 엔드포인트에 요청하여 HttpOnly refresh_token 쿠키로
+            // 새로운 HttpOnly access_token 쿠키를 받도록 시도합니다.
+            await axios.post('http://localhost:8000/api/token/refresh/', {}, { withCredentials: true });
+            
+            // 토큰 갱신 성공 시, 원래 요청 재시도
+            return axios(originalRequest);
+          } catch (refreshError) {
+            console.error('Refresh Token 갱신 실패 (재로그인 필요):', refreshError);
+            // refresh token도 만료되었거나 유효하지 않은 경우
+            alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+            handleLogout(); // 강제 로그아웃 처리
+            return Promise.reject(refreshError);
           }
-      );
+        }
+        return Promise.reject(error);
+      }
+    );
 
-      return () => axios.interceptors.response.eject(interceptor);
-  }, []); // refreshTokenValue 의존성 제거
+    return () => axios.interceptors.response.eject(interceptor);
+  }, [navigate]); // navigate 추가
 
   const login = useCallback((userData) => {
-      // 백엔드에서 HttpOnly 쿠키로 토큰을 설정하므로,
-      // 여기서 access_token과 refresh_token을 저장할 필요가 없습니다.
-      // 사용자 정보만 받아서 상태를 업데이트합니다.
-      const { user } = userData; 
-      setUser(user);
-      setIsAuthenticated(true);
-      localStorage.setItem('user', JSON.stringify(user)); // 사용자 정보만 localStorage에 저장
+    // 백엔드에서 HttpOnly 쿠키로 토큰을 설정하므로,
+    // 여기서 토큰 값을 직접 저장할 필요 없이 사용자 정보만 저장합니다.
+    const { user } = userData; 
+    setUser(user);
+    setIsAuthenticated(true);
+    localStorage.setItem('user', JSON.stringify(user)); // 사용자 정보만 localStorage에 저장
   }, []);
 
   const handleLogout = useCallback(async () => {
-      try {
-          // logout API 호출 (백엔드에서 refresh token을 쿠키에서 가져오거나,
-          // body로 보내는 경우에 따라 인자가 필요할 수 있습니다.
-          // 현재 백엔드 `logout` 함수는 `refresh_token`을 `request.data`에서 기대합니다.)
-          // 따라서, 만약 refresh token을 백엔드에 보내야 한다면
-          // 백엔드가 프론트엔드에 `refresh_token`을 쿠키가 아닌 body로 보내도록
-          // 요청해야 할 수도 있습니다.
-          // 여기서는 `refresh_token`을 보내지 않는 시나리오로 가정합니다.
-          // (백엔드에서 HttpOnly 쿠키로 refresh_token을 읽어서 처리한다고 가정)
-          await logout(); // refreshTokenValue 인자 제거 (백엔드에서 쿠키로 처리)
-          
-          setUser(null);
-          setIsAuthenticated(false);
-          localStorage.removeItem('user'); // 사용자 정보만 제거
-          navigate('/login');
-          console.log('Successfully logged out.');
-      } catch (error) {
-          console.error('Logout failed:', error.message);
-          // 로그아웃 실패 시에도 로컬 상태는 초기화하는 것이 좋습니다.
-          setUser(null);
-          setIsAuthenticated(false);
-          localStorage.removeItem('user');
-          navigate('/login');
-          // 사용자에게 에러 메시지 표시
-      }
+    try {
+      // 백엔드의 logout API를 호출하여 HttpOnly refresh token을 블랙리스트 처리
+      await authServiceLogout(); // 인자 없이 호출
+      
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem('user'); // 사용자 정보만 제거
+      navigate('/login');
+      console.log('Successfully logged out.');
+    } catch (error) {
+      console.error('Logout failed:', error.message);
+      // 로그아웃 실패 시에도 로컬 상태는 초기화하는 것이 좋습니다.
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem('user');
+      navigate('/login'); // 실패해도 로그인 페이지로 리다이렉트하여 로그인되지 않은 상태임을 명확히 합니다.
+    }
   }, [navigate]);
 
   return (
-      <AuthContext.Provider
-          value={{
-              isAuthenticated,
-              user,
-              // accessToken은 더 이상 제공하지 않습니다.
-              login,
-              logout: handleLogout,
-              loading,
-          }}
-      >
-          {children}
-      </AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        user,
+        login,
+        logout: handleLogout,
+        loading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 }
 

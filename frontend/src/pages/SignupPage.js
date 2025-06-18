@@ -22,8 +22,8 @@ function SignupPage() {
     setLoading(true);
 
     try {
-      const { access_token, refresh_token, user } = await register(name, email, password);
-      authLogin(access_token, user, refresh_token);
+      const { user } = await register(name, email, password);
+      authLogin(user);
       navigate('/add-experience');
     } catch (err) {
       setError(err.message || 'Failed to sign up');
@@ -37,8 +37,8 @@ function SignupPage() {
       setError('');
       setLoading(true);
       try {
-        const { access_token, refresh_token, user } = await googleLogin(codeResponse.code);
-        authLogin(access_token, user, refresh_token);
+        const { user } = await googleLogin(codeResponse.code);
+        authLogin(user);
         navigate('/add-experience');
       } catch (err) {
         setError(err.message || 'Failed to sign up with Google');
